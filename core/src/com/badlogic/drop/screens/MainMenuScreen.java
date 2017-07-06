@@ -1,11 +1,13 @@
 package com.badlogic.drop.screens;
 
+import com.badlogic.drop.AssetsManager;
 import com.badlogic.drop.Drop;
 import com.badlogic.drop.ScreenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,10 +15,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Scaling;
@@ -30,12 +29,11 @@ public class MainMenuScreen implements Screen {
     final Drop game;
     OrthographicCamera camera;
     Viewport viewport;
-    AssetManager assetManager;
 
     private Stage stage;
     private Table table;
-    private Sprite logo;
-    private Sprite background;
+    private Texture logo;
+    private Texture background;
 
     public MainMenuScreen(final Drop game) {
         this.game = game;
@@ -47,13 +45,9 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
-        background = new Sprite(new Texture(Gdx.files.internal("background.png")));
+        background = AssetsManager.getAssetsManager().getTexture(AssetsManager.MAIN_BACKGROUND);
 
-        assetManager = new AssetManager();
-        assetManager.load("uiskin.json", Skin.class,
-                new SkinLoader.SkinParameter("uiskin.atlas"));
-        assetManager.finishLoading();
-        Skin skin = assetManager.get("uiskin.json", Skin.class);
+        Skin skin = AssetsManager.getAssetsManager().getUISkin();
 
         table = new Table();
         table.setFillParent(true);
@@ -62,27 +56,30 @@ public class MainMenuScreen implements Screen {
         Table table1 = new Table();
         Table table2 = new Table();
 
-        logo = new Sprite(new Texture(Gdx.files.internal("logo.png")));
+        logo = AssetsManager.getAssetsManager().getTexture(AssetsManager.LOGO);
         Image logoImage = new Image(logo);
         logoImage.setScaling(Scaling.fit);
 
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = new NinePatchDrawable(skin.getPatch("default-round-large"));
-        style.over = new NinePatchDrawable(skin.getPatch("default-over"));
-        style.down = new NinePatchDrawable(skin.getPatch("default-scroll"));
-        style.font = skin.getFont("default-font");
-
-        TextButton button1 = new TextButton("Play", skin);
-        button1.addListener(new ChangeListener() {
+        TextButton buttonPlay = new TextButton("Play", skin);
+        buttonPlay.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).push(new LevelGroupMenuScreen(game));
             }
         });
+        TextButton buttonSettings = new TextButton("Settings", skin);
+        buttonSettings.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new SettingsScreen(game));
+            }
+        });
 
         table1.add(logoImage).expand().fill();
 
-        table2.add(button1);
+        table2.add(buttonPlay).center();
+        table2.row();
+        table2.add(buttonSettings).center();
 
         table.pad(50);
         table.add(table1).expand().fill();
@@ -113,7 +110,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        assetManager.dispose();
         stage.dispose();
     }
 

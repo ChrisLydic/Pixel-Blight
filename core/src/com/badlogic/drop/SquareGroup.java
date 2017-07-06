@@ -1,47 +1,52 @@
 package com.badlogic.drop;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
+import com.badlogic.gdx.utils.Array;
 
-import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
-
-enum Spread {
-    EMPTY,
-    SLOW,
-    NORMAL,
-    FAST,
-    BOMB,
-    SPRINT
-}
-enum Clicks {
-    SINGLE,
-    DOUBLE,
-    TRIPLE
-}
 
 /**
  * Created by chris on 5/28/2017.
  */
 public class SquareGroup {
     private Square[][] squares;
-    private ArrayList<Square> newInfectedSquares;
+    private Array<Square> affectedSquares;
     private float originX;
     private float originY;
     private short count;
     private int totalSquares;
     private int infectedSquares;
+    private int curedSquares;
+    private Array<ParticleEffectPool.PooledEffect> pooledTapEffects;
+    private Array<ParticleEffectPool.PooledEffect> pooledCureEffects;
+    private Array<Animation> animations;
+    private int[][] originalBoard;
+    private int[][] originalCorruptedSquares;
 
-    public SquareGroup(int rows, int columns, int[][] board, int[][] corruptedSquares) {
+    public SquareGroup(int[][] board, int[][] corruptedSquares) {
+        originalBoard = board;
+        originalCorruptedSquares = corruptedSquares;
+
+        setup();
+    }
+
+    private void setup() {
         count = 0;
-        infectedSquares = corruptedSquares.length;
-        totalSquares = rows * columns;
-        newInfectedSquares = new ArrayList<Square>();
-        squares = new Square[rows][columns];
+        infectedSquares = originalCorruptedSquares.length;
+        totalSquares = originalBoard.length * originalBoard[0].length;
+        squares = new Square[originalBoard.length][originalBoard[0].length];
+
+        pooledTapEffects = new Array<>();
+        pooledCureEffects = new Array<>();
+        animations = new Array<>();
+        affectedSquares = new Array<>();
 
         for (int r = 0; r < squares.length; r++) {
             for (int c = 0; c < squares[0].length; c++) {
-                switch (board[r][c]) {
+                switch (originalBoard[r][c]) {
                     case 0:
                         totalSquares--;
                         squares[r][c] = new Square(Spread.EMPTY, Clicks.SINGLE);
@@ -75,310 +80,323 @@ public class SquareGroup {
 
         for (int r = 0; r < squares.length; r++) {
             for (int c = 0; c < squares[0].length; c++) {
-                if (squares[r][c].spreadType == Spread.EMPTY) {
+                if (squares[r][c].getSpreadType() == Spread.EMPTY) {
                     continue;
                 }
 
+                if ((r == squares.length - 1) || (squares[r + 1][c].getSpreadType() == Spread.EMPTY)) {
+                    squares[r][c].setEdge(true);
+                } else {
+                    squares[r][c].setEdge(false);
+                }
+
                 if (r == 0){
-                    if (squares[r + 1][c].spreadType != Spread.EMPTY) {
-                        squares[r][c].neighbors.add(squares[r + 1][c]);
+                    if (squares[r + 1][c].getSpreadType() != Spread.EMPTY) {
+                        squares[r][c].getNeighbors().add(squares[r + 1][c]);
                     }
                 } else if (r == squares.length - 1) {
-                    if (squares[r - 1][c].spreadType != Spread.EMPTY) {
-                        squares[r][c].neighbors.add(squares[r - 1][c]);
+                    if (squares[r - 1][c].getSpreadType() != Spread.EMPTY) {
+                        squares[r][c].getNeighbors().add(squares[r - 1][c]);
                     }
                 } else {
-                    if (squares[r + 1][c].spreadType != Spread.EMPTY) {
-                        squares[r][c].neighbors.add(squares[r + 1][c]);
+                    if (squares[r + 1][c].getSpreadType() != Spread.EMPTY) {
+                        squares[r][c].getNeighbors().add(squares[r + 1][c]);
                     }
-                    if (squares[r - 1][c].spreadType != Spread.EMPTY) {
-                        squares[r][c].neighbors.add(squares[r - 1][c]);
+                    if (squares[r - 1][c].getSpreadType() != Spread.EMPTY) {
+                        squares[r][c].getNeighbors().add(squares[r - 1][c]);
                     }
                 }
 
                 if (c == 0){
-                    if (squares[r][c + 1].spreadType != Spread.EMPTY) {
-                        squares[r][c].neighbors.add(squares[r][c + 1]);
+                    if (squares[r][c + 1].getSpreadType() != Spread.EMPTY) {
+                        squares[r][c].getNeighbors().add(squares[r][c + 1]);
                     }
                 } else if (c == squares[0].length - 1) {
-                    if (squares[r][c - 1].spreadType != Spread.EMPTY) {
-                        squares[r][c].neighbors.add(squares[r][c - 1]);
+                    if (squares[r][c - 1].getSpreadType() != Spread.EMPTY) {
+                        squares[r][c].getNeighbors().add(squares[r][c - 1]);
                     }
                 } else {
-                    if (squares[r][c + 1].spreadType != Spread.EMPTY) {
-                        squares[r][c].neighbors.add(squares[r][c + 1]);
+                    if (squares[r][c + 1].getSpreadType() != Spread.EMPTY) {
+                        squares[r][c].getNeighbors().add(squares[r][c + 1]);
                     }
-                    if (squares[r][c - 1].spreadType != Spread.EMPTY) {
-                        squares[r][c].neighbors.add(squares[r][c - 1]);
-                    }
-                }
-
-                if (squares[r][c].spreadType == Spread.SPRINT) {
-                    if (r <= 1){
-                        if (squares[r + 2][c].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 2][c]);
-                        }
-                    } else if (r >= squares.length - 2) {
-                        if (squares[r - 2][c].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 2][c]);
-                        }
-                    } else {
-                        if (squares[r + 2][c].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 2][c]);
-                        }
-                        if (squares[r - 2][c].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 2][c]);
-                        }
-                    }
-
-                    if (c <= 1){
-                        if (squares[r][c + 2].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r][c + 2]);
-                        }
-                    } else if (c >= squares[0].length - 2) {
-                        if (squares[r][c - 2].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r][c - 2]);
-                        }
-                    } else {
-                        if (squares[r][c + 2].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r][c + 2]);
-                        }
-                        if (squares[r][c - 2].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r][c - 2]);
-                        }
+                    if (squares[r][c - 1].getSpreadType() != Spread.EMPTY) {
+                        squares[r][c].getNeighbors().add(squares[r][c - 1]);
                     }
                 }
 
-                if (squares[r][c].spreadType == Spread.BOMB) {
+                if (squares[r][c].getSpreadType() == Spread.BOMB) {
                     if (r == 0 && c == 0) {
-                        if (squares[r + 1][c + 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 1][c + 1]);
+                        if (squares[r + 1][c + 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r + 1][c + 1]);
                         }
                     } else if (r == 0 && c == (squares[0].length - 1)) {
-                        if (squares[r + 1][c - 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 1][c - 1]);
+                        if (squares[r + 1][c - 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r + 1][c - 1]);
                         }
                     } else if ((r == squares.length - 1) && c == 0) {
-                        if (squares[r - 1][c + 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 1][c + 1]);
+                        if (squares[r - 1][c + 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r - 1][c + 1]);
                         }
                     } else if ((r == squares.length - 1) && (c == squares[0].length - 1)) {
-                        if (squares[r - 1][c - 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 1][c - 1]);
+                        if (squares[r - 1][c - 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r - 1][c - 1]);
                         }
                     } else if (r == 0) {
-                        if (squares[r + 1][c + 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 1][c + 1]);
+                        if (squares[r + 1][c + 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r + 1][c + 1]);
                         }
-                        if (squares[r + 1][c - 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 1][c - 1]);
+                        if (squares[r + 1][c - 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r + 1][c - 1]);
                         }
                     } else if (r == squares.length - 1) {
-                        if (squares[r - 1][c + 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 1][c + 1]);
+                        if (squares[r - 1][c + 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r - 1][c + 1]);
                         }
-                        if (squares[r - 1][c - 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 1][c - 1]);
+                        if (squares[r - 1][c - 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r - 1][c - 1]);
                         }
                     } else if (c == 0) {
-                        if (squares[r - 1][c + 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 1][c + 1]);
+                        if (squares[r - 1][c + 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r - 1][c + 1]);
                         }
-                        if (squares[r + 1][c + 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 1][c + 1]);
+                        if (squares[r + 1][c + 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r + 1][c + 1]);
                         }
                     } else if (c == squares[0].length - 1) {
-                        if (squares[r - 1][c - 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 1][c - 1]);
+                        if (squares[r - 1][c - 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r - 1][c - 1]);
                         }
-                        if (squares[r + 1][c - 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 1][c - 1]);
+                        if (squares[r + 1][c - 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r + 1][c - 1]);
                         }
                     } else {
-                        if (squares[r - 1][c + 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 1][c + 1]);
+                        if (squares[r - 1][c + 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r - 1][c + 1]);
                         }
-                        if (squares[r - 1][c - 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r - 1][c - 1]);
+                        if (squares[r - 1][c - 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r - 1][c - 1]);
                         }
-                        if (squares[r + 1][c + 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 1][c + 1]);
+                        if (squares[r + 1][c + 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r + 1][c + 1]);
                         }
-                        if (squares[r + 1][c - 1].spreadType != Spread.EMPTY) {
-                            squares[r][c].neighbors.add(squares[r + 1][c - 1]);
+                        if (squares[r + 1][c - 1].getSpreadType() != Spread.EMPTY) {
+                            squares[r][c].getNeighbors().add(squares[r + 1][c - 1]);
                         }
                     }
                 }
             }
         }
 
-        for (int i = 0; i < corruptedSquares.length; i++) {
-            squares[corruptedSquares[i][0]][corruptedSquares[i][1]].isInfected = true;
+        for (int i = 0; i < originalCorruptedSquares.length; i++) {
+            squares[originalCorruptedSquares[i][0]][originalCorruptedSquares[i][1]].setInfected(true);
         }
     }
 
-    public void setOrigin(float x, float y) {
-        originX = x;
-        originY = y;
-
+    public void setOrigin(float originX, float originY) {
         for (int r = 0; r < squares.length; r++) {
             for (int c = 0; c < squares[0].length; c++) {
-                squares[r][c].x = originX + ((-10*squares[0].length/2) + c*10);
-                squares[r][c].y = originY + ((-10*squares.length/2) + ((squares.length-1)-r)*10);
+                squares[r][c].setX(originX + ((-10*squares[0].length/2) + c*10));
+                squares[r][c].setY(originY + ((-10*squares.length/2) + ((squares.length-1)-r)*10));
             }
         }
     }
 
-    public void draw(Batch batch, TextureRegion[][] tiles) {
+    public void draw(Batch batch, float delta) {
         for (int r = 0; r < squares.length; r++) {
             for (int c = 0; c < squares[0].length; c++) {
-                if (squares[r][c].spreadType == Spread.EMPTY) {
-                    continue;
-                }
+                squares[r][c].draw(batch, delta);
+            }
+        }
 
-                if (r == squares.length - 1) {
-                    if (squares[r][c].isInfected) {
-                        batch.draw(tiles[squares[r][c].color][Square.DARK_EDGE_TILE], squares[r][c].x, squares[r][c].y, Square.SIZE, Square.SIZE);
-                    } else {
-                        batch.draw(tiles[squares[r][c].color][Square.EDGE_TILE], squares[r][c].x, squares[r][c].y, Square.SIZE, Square.SIZE);
-                    }
-                } else if (squares[r + 1][c].spreadType == Spread.EMPTY) {
-                    if (squares[r][c].isInfected) {
-                        batch.draw(tiles[squares[r][c].color][Square.DARK_EDGE_TILE], squares[r][c].x, squares[r][c].y, Square.SIZE, Square.SIZE);
-                    } else {
-                        batch.draw(tiles[squares[r][c].color][Square.EDGE_TILE], squares[r][c].x, squares[r][c].y, Square.SIZE, Square.SIZE);
-                    }
-                } else if (squares[r][c].isInfected) {
-                    batch.draw(tiles[squares[r][c].color][Square.DARK_TILE], squares[r][c].x, squares[r][c].y, Square.SIZE, Square.SIZE);
-                } else {
-                    batch.draw(tiles[squares[r][c].color][Square.NORMAL_TILE], squares[r][c].x, squares[r][c].y, Square.SIZE, Square.SIZE);
-                }
+        for (int i = pooledTapEffects.size - 1; i >= 0; i--) {
+            ParticleEffectPool.PooledEffect effect = pooledTapEffects.get(i);
+            effect.draw(batch, delta);
+            if (effect.isComplete()) {
+                effect.free();
+                pooledTapEffects.removeIndex(i);
+            }
+        }
+
+        for (int i = pooledCureEffects.size - 1; i >= 0; i--) {
+            ParticleEffectPool.PooledEffect effect = pooledCureEffects.get(i);
+            effect.draw(batch, delta);
+            if (effect.isComplete()) {
+                effect.free();
+                pooledCureEffects.removeIndex(i);
+            }
+        }
+
+        for (int i = animations.size - 1; i >= 0; i--) {
+            Animation animation = animations.get(i);
+
+            animation.draw(batch, delta);
+
+            // remove the animation once it completes
+            if (animation.isAnimationFinished()) {
+                animations.removeIndex(i);
             }
         }
     }
 
-    public void touched( float x, float y, Enum<ActionType> action ) {
+    public void touched(float x, float y) {
+        Enum<ActionManager.ActionType> action = ActionManager.getActionManager().getCurrentAction();
+
         for (int r = 0; r < squares.length; r++) {
             for (int c = 0; c < squares[0].length; c++) {
-                if (x >= squares[r][c].x && x <= (squares[r][c].x + 10) && y >= squares[r][c].y && y <= (squares[r][c].y + 10) ) {
-                    if (squares[r][c].spreadType == Spread.EMPTY) {
+                if (x >= squares[r][c].getX() && x <= (squares[r][c].getX() + 10) && y >= squares[r][c].getY() && y <= (squares[r][c].getY() + 10) ) {
+                    if (squares[r][c].getSpreadType() == Spread.EMPTY) {
                         continue;
                     }
 
-                    if (action == ActionType.TAP) {
-                        if (squares[r][c].isInfected) {
-                            squares[r][c].clickCount++;
+                    if (action == ActionManager.ActionType.TAP) {
+                        if (squares[r][c].isInfected()) {
+                            ParticleEffectPool.PooledEffect pooledEffect = AssetsManager.getAssetsManager().getEffectPool(AssetsManager.TAP_EFFECT).obtain();
+                            pooledEffect.setPosition(x, y);
+                            pooledTapEffects.add(pooledEffect);
 
-                            if (squares[r][c].clicksType == Clicks.DOUBLE && squares[r][c].clickCount == 2) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            } else if (squares[r][c].clicksType == Clicks.TRIPLE && squares[r][c].clickCount == 3) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            } else if (squares[r][c].clicksType == Clicks.SINGLE && squares[r][c].clickCount == 1) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            }
-                        }
-                    } else if (action == ActionType.SCATTER) {
-                        if (squares[r][c].isInfected && Math.random() > 0.5) {
-                            squares[r][c].clickCount++;
-
-                            if (squares[r][c].clicksType == Clicks.DOUBLE && squares[r][c].clickCount == 2) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            } else if (squares[r][c].clicksType == Clicks.TRIPLE && squares[r][c].clickCount == 3) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            } else if (squares[r][c].clicksType == Clicks.SINGLE && squares[r][c].clickCount == 1) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            }
+                            squares[r][c].unCorrupt(1);
                         }
 
-                        for (Square neighbor : squares[r][c].neighbors) {
-                            if (neighbor.isInfected && Math.random() > 0.5) {
-                                neighbor.clickCount++;
+                    } else if (action == ActionManager.ActionType.SCATTER) {
+                        ActionManager.getActionManager().setScatterCount(ActionManager.getActionManager().getScatterCount() - 1);
 
-                                if (neighbor.clicksType == Clicks.DOUBLE && neighbor.clickCount == 2) {
-                                    neighbor.isInfected = false;
-                                    neighbor.clickCount = 0;
-                                } else if (neighbor.clicksType == Clicks.TRIPLE && neighbor.clickCount == 3) {
-                                    neighbor.isInfected = false;
-                                    neighbor.clickCount = 0;
-                                } else if (neighbor.clicksType == Clicks.SINGLE && neighbor.clickCount == 1) {
-                                    neighbor.isInfected = false;
-                                    neighbor.clickCount = 0;
-                                }
-                            }
+                        affectedSquares.clear();
 
-                            for (Square neighborInner : neighbor.neighbors) {
-                                if (neighborInner.isInfected && Math.random() > 0.5) {
-                                    neighborInner.clickCount++;
+                        if (ActionManager.getActionManager().getCurrentLevel() == 1) {
+                            buildNeighbors(squares[r][c], affectedSquares, 2);
+                        } else if (ActionManager.getActionManager().getCurrentLevel() == 2) {
+                            buildNeighbors(squares[r][c], affectedSquares, 3);
+                        }
 
-                                    if (neighborInner.clicksType == Clicks.DOUBLE && neighborInner.clickCount == 2) {
-                                        neighborInner.isInfected = false;
-                                        neighborInner.clickCount = 0;
-                                    } else if (neighborInner.clicksType == Clicks.TRIPLE && neighborInner.clickCount == 3) {
-                                        neighborInner.isInfected = false;
-                                        neighborInner.clickCount = 0;
-                                    } else if (neighborInner.clicksType == Clicks.SINGLE && neighborInner.clickCount == 1) {
-                                        neighborInner.isInfected = false;
-                                        neighborInner.clickCount = 0;
+                        int isHit = ThreadLocalRandom.current().nextInt(0, 3);
+
+                        if (ActionManager.getActionManager().getCurrentLevel() == 3) {
+                            for (int row = 0; row < squares.length; row++) {
+                                for (Square affected: squares[row]) {
+                                    if (isHit == 2) {
+                                        isHit = 0;
+
+                                        affected.unCorrupt(1);
+
+                                        animations.add(AssetsManager.getAssetsManager().getAnimation("_", affected.getX() - AssetsManager.SIZE / 2, affected.getY() - AssetsManager.SIZE / 2, AssetsManager.SIZE * 2, AssetsManager.SIZE * 2, 0.07f, false));
+                                    } else {
+                                        isHit++;
                                     }
                                 }
                             }
-                        }
-                    } else if (action == ActionType.BOMB) {
-                        if (squares[r][c].isInfected) {
-                            squares[r][c].clickCount++;
+                        } else {
+                            for (Square affected : affectedSquares) {
+                                if (isHit == 2) {
+                                    isHit = 0;
 
-                            if (squares[r][c].clicksType == Clicks.DOUBLE && squares[r][c].clickCount == 2) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            } else if (squares[r][c].clicksType == Clicks.TRIPLE && squares[r][c].clickCount == 3) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            } else if (squares[r][c].clicksType == Clicks.SINGLE && squares[r][c].clickCount == 1) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].clickCount = 0;
-                            }
-                        }
+                                    affected.unCorrupt(1);
 
-                        for (Square neighbor : squares[r][c].neighbors) {
-                            if (neighbor.isInfected) {
-                                neighbor.clickCount++;
-
-                                if (neighbor.clicksType == Clicks.DOUBLE && neighbor.clickCount == 2) {
-                                    neighbor.isInfected = false;
-                                    neighbor.clickCount = 0;
-                                } else if (neighbor.clicksType == Clicks.TRIPLE && neighbor.clickCount == 3) {
-                                    neighbor.isInfected = false;
-                                    neighbor.clickCount = 0;
-                                } else if (neighbor.clicksType == Clicks.SINGLE && neighbor.clickCount == 1) {
-                                    neighbor.isInfected = false;
-                                    neighbor.clickCount = 0;
+                                    animations.add(AssetsManager.getAssetsManager().getAnimation("_", affected.getX() - AssetsManager.SIZE / 2, affected.getY() - AssetsManager.SIZE / 2, AssetsManager.SIZE * 2, AssetsManager.SIZE * 2, 0.07f, false));
+                                } else {
+                                    isHit++;
                                 }
                             }
                         }
-                    } else if (action == ActionType.CURE) {
-                        if (squares[r][c].isInfected) {
-                            squares[r][c].clickCount++;
+                    } else if (action == ActionManager.ActionType.BOMB) {
+                        ActionManager.getActionManager().setBombCount(ActionManager.getActionManager().getBombCount() - 1);
 
-                            if (squares[r][c].clicksType == Clicks.DOUBLE && squares[r][c].clickCount == 2) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].isCured = true;
-                                squares[r][c].clickCount = 0;
-                            } else if (squares[r][c].clicksType == Clicks.TRIPLE && squares[r][c].clickCount == 3) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].isCured = true;
-                                squares[r][c].clickCount = 0;
-                            } else if (squares[r][c].clicksType == Clicks.SINGLE && squares[r][c].clickCount == 1) {
-                                squares[r][c].isInfected = false;
-                                squares[r][c].isCured = true;
-                                squares[r][c].clickCount = 0;
+                        affectedSquares.clear();
+
+                        if (ActionManager.getActionManager().getCurrentLevel() == 1) {
+                            buildNeighbors(squares[r][c], affectedSquares, 2);
+
+                            if (r - 2 >= 0 && c + 1 < squares[r].length) {
+                                affectedSquares.add(squares[r - 2][c + 1]);
                             }
+                            if (r - 1 >= 0 && c + 2 < squares[r].length) {
+                                affectedSquares.add(squares[r - 1][c + 2]);
+                            }
+
+                            if (r + 1 < squares.length && c + 2 < squares[r].length) {
+                                affectedSquares.add(squares[r + 1][c + 2]);
+                            }
+                            if (r + 2 < squares.length && c + 1 < squares[r].length) {
+                                affectedSquares.add(squares[r + 2][c + 1]);
+                            }
+
+                            if (r - 2 >= 0 && c - 1 >= 0) {
+                                affectedSquares.add(squares[r - 2][c - 1]);
+                            }
+                            if (r - 1 >= 0 && c - 2 >= 0) {
+                                affectedSquares.add(squares[r - 1][c - 2]);
+                            }
+
+                            if (r + 1 < squares.length && c - 2 >= 0) {
+                                affectedSquares.add(squares[r + 1][c - 2]);
+                            }
+                            if (r + 2 < squares.length && c - 1 >= 0) {
+                                affectedSquares.add(squares[r + 2][c - 1]);
+                            }
+
+                            animations.add(AssetsManager.getAssetsManager().getAnimation("_", x - AssetsManager.SIZE * 4f, y - AssetsManager.SIZE * 4f, AssetsManager.SIZE * 8, AssetsManager.SIZE * 8, 0.07f, false));
+
+                        } else if (ActionManager.getActionManager().getCurrentLevel() == 2) {
+                            buildNeighbors(squares[r][c], affectedSquares, 4);
+
+                            if (r - 4 >= 0) {
+                                affectedSquares.removeValue(squares[r - 4][c], true);
+                            }
+                            if (c + 4 < squares[r].length) {
+                                affectedSquares.removeValue(squares[r][c + 4], true);
+                            }
+                            if (r + 4 < squares.length) {
+                                affectedSquares.removeValue(squares[r + 4][c], true);
+                            }
+                            if (c - 4 >= 0) {
+                                affectedSquares.removeValue(squares[r][c - 4], true);
+                            }
+
+                            animations.add(AssetsManager.getAssetsManager().getAnimation("_", x - AssetsManager.SIZE * 5, y - AssetsManager.SIZE * 5, AssetsManager.SIZE * 10, AssetsManager.SIZE * 10, 0.07f, false));
+
+                        } else if (ActionManager.getActionManager().getCurrentLevel() == 3) {
+                            buildNeighbors(squares[r][c], affectedSquares, 5);
+
+                            if (r - 5 >= 0) {
+                                affectedSquares.removeValue(squares[r - 5][c], true);
+                            }
+                            if (c + 5 < squares[r].length) {
+                                affectedSquares.removeValue(squares[r][c + 5], true);
+                            }
+                            if (r + 5 < squares.length) {
+                                affectedSquares.removeValue(squares[r + 5][c], true);
+                            }
+                            if (c - 5 >= 0) {
+                                affectedSquares.removeValue(squares[r][c - 5], true);
+                            }
+
+                            if (r - 3 >= 0 && c + 3 < squares[r].length) {
+                                affectedSquares.add(squares[r - 3][c + 3]);
+                            }
+                            if (r + 3 < squares.length && c + 3 < squares[r].length) {
+                                affectedSquares.add(squares[r + 3][c + 3]);
+                            }
+                            if (r - 3 >= 0 && c - 3 >= 0) {
+                                affectedSquares.add(squares[r - 3][c - 3]);
+                            }
+                            if (r + 3 < squares.length && c - 3 >= 0) {
+                                affectedSquares.add(squares[r + 3][c - 3]);
+                            }
+
+                            animations.add(AssetsManager.getAssetsManager().getAnimation("_", x - AssetsManager.SIZE * 7, y - AssetsManager.SIZE * 7, AssetsManager.SIZE * 14, AssetsManager.SIZE * 14, 0.07f, false));
                         }
+
+                        for (Square square : affectedSquares) {
+                            square.unCorrupt(1);
+                        }
+
+                    } else if (action == ActionManager.ActionType.CURE) {
+                        ActionManager.getActionManager().setCureCount(ActionManager.getActionManager().getCureCount() - 1);
+
+                        ParticleEffectPool.PooledEffect pooledEffect = AssetsManager.getAssetsManager().getEffectPool(AssetsManager.CURE_EFFECT).obtain();
+                        pooledEffect.setPosition(x, y);
+                        pooledCureEffects.add(pooledEffect);
+
+                        squares[r][c].cure();
                     }
                     break;
                 }
@@ -387,38 +405,55 @@ public class SquareGroup {
     }
 
     public void corrupt(float delta) {
-        newInfectedSquares.clear();
+        affectedSquares.clear();
         infectedSquares = 0;
+        curedSquares = 0;
 
         for (int r = 0; r < squares.length; r++) {
             for (int c = 0; c < squares[0].length; c++) {
-                if (squares[r][c].isInfected) {
+                if (squares[r][c].getSpreadType() == Spread.EMPTY) {
+                    continue;
+                }
+
+                if (squares[r][c].isInfected()) {
                     infectedSquares++;
 
-                    if (squares[r][c].spreadType == Spread.NORMAL && !(count == 3 || count == 7)) {continue;}
-                    if (squares[r][c].spreadType == Spread.SLOW && count != 7) {continue;}
+                    if (squares[r][c].getSpreadType() == Spread.NORMAL && !(count == 3 || count == 7)) {continue;}
+                    if (squares[r][c].getSpreadType() == Spread.SLOW && count != 7) {continue;}
 
-                    int corruptCount = (int) Math.ceil(squares[r][c].neighbors.size() / 2f);
+                    int corruptCount = (int) Math.ceil(squares[r][c].getNeighbors().size / 2f);
 
                     for (int i = 0; i < corruptCount; i++) {
-                        Square neighbor = squares[r][c].neighbors.get((int)Math.floor(Math.random() * squares[r][c].neighbors.size()));
+                        Square neighbor = squares[r][c].getNeighbors().get((int)Math.floor(Math.random() * squares[r][c].getNeighbors().size));
 
-                        if (!neighbor.isInfected && !neighbor.isCured && !newInfectedSquares.contains(neighbor)) {
-                            newInfectedSquares.add(neighbor);
+                        if (!neighbor.isInfected() && !neighbor.isCured() && !affectedSquares.contains(neighbor, true)) {
+                            affectedSquares.add(neighbor);
                         }
                     }
+                } else if (squares[r][c].isCured()) {
+                    curedSquares++;
                 }
             }
         }
 
-        for (Square newInfected : newInfectedSquares) {
-            newInfected.isInfected = true;
+        for (Square newInfected : affectedSquares) {
+            newInfected.corrupt();
         }
 
         if (count == 7) {
             count = 0;
         } else {
             count++;
+        }
+
+        if (infectedSquares + curedSquares == totalSquares) {
+            for (int r = 0; r < squares.length; r++) {
+                for (int c = 0; c < squares[0].length; c++) {
+                    if (squares[r][c].isCured()) {
+                        squares[r][c].unCure();
+                    }
+                }
+            }
         }
     }
 
@@ -434,45 +469,23 @@ public class SquareGroup {
         return 1 - (infectedSquares/(float)totalSquares);
     }
 
-    class Square {
-        public int color;
-        public Enum<Spread> spreadType;
-        public Enum<Clicks> clicksType;
-        public boolean isInfected;
-        public float x;
-        public float y;
-        public static final int SIZE = 10;
-        public static final int NORMAL_TILE = 0;
-        public static final int DARK_TILE = 1;
-        public static final int EDGE_TILE = 2;
-        public static final int DARK_EDGE_TILE = 3;
-        public ArrayList<Square> neighbors;
-        public int clickCount;
-        public boolean isCured;
+    public void reset() {
+        setup();
+    }
 
-        public Square(Enum<Spread> spread, Enum<Clicks> clicks) {
-            clickCount = 0;
-            spreadType = spread;
-            clicksType = clicks;
-            isCured = false;
-
-            if (spreadType == Spread.SLOW) {
-                color = 2;
-            } else if (spreadType == Spread.FAST) {
-                color = 5;
-            } else if (spreadType == Spread.BOMB) {
-                color = 4;
-            } else if (spreadType == Spread.SPRINT) {
-                color = 6;
-            } else if (clicksType == Clicks.DOUBLE) {
-                color = 1;
-            } else if (clicksType == Clicks.TRIPLE) {
-                color = 3;
-            } else if (clicksType == Clicks.SINGLE) {
-                color = 0;
+    private void buildNeighbors(Square square, Array<Square> returnedSquares, int depth) {
+        if (depth == 0) {
+            if (!returnedSquares.contains(square, true)) {
+                returnedSquares.add(square);
+            }
+        } else {
+            for (int i = 0; i < square.getNeighbors().size; i++) {
+                buildNeighbors(square.getNeighbors().get(i), returnedSquares, depth - 1);
             }
 
-            neighbors = new ArrayList<Square>();
+            if (!returnedSquares.contains(square, true)) {
+                returnedSquares.add(square);
+            }
         }
     }
 }

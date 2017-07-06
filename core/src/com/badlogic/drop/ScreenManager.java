@@ -37,4 +37,10 @@ public class ScreenManager {
 
         game.setScreen(screenStack.get(screenStack.size() - 1));
     }
+
+    public void pop(int times) {
+        for (int i = 0; i < times; i++) {
+            this.pop();
+        }
+    }
 }

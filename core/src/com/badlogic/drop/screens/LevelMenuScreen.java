@@ -1,5 +1,6 @@
 package com.badlogic.drop.screens;
 
+import com.badlogic.drop.AssetsManager;
 import com.badlogic.drop.Drop;
 import com.badlogic.drop.ScreenManager;
 import com.badlogic.drop.SquareGroup;
@@ -26,7 +27,6 @@ public class LevelMenuScreen implements Screen {
     final Drop game;
     OrthographicCamera camera;
     Viewport viewport;
-    AssetManager assetManager;
 
     private Stage stage;
     private Table table;
@@ -155,16 +155,16 @@ public class LevelMenuScreen implements Screen {
     public LevelMenuScreen(final Drop game, String world) {
         this.game = game;
 
-        levels[0] = new SquareGroup( level0.length, level0[0].length, level0, level0Corrupt);
-        levels[1] = new SquareGroup( level1.length, level1[0].length, level1, level1Corrupt);
-        levels[2] = new SquareGroup( level2.length, level2[0].length, level2, level2Corrupt);
-        levels[3] = new SquareGroup( level3.length, level3[0].length, level3, level3Corrupt);
-        levels[4] = new SquareGroup( level4.length, level4[0].length, level4, level4Corrupt);
-        levels[5] = new SquareGroup( level5.length, level5[0].length, level5, level5Corrupt);
-        levels[6] = new SquareGroup( level6.length, level6[0].length, level6, level6Corrupt);
-        levels[7] = new SquareGroup( level7.length, level7[0].length, level7, level7Corrupt);
-        levels[8] = new SquareGroup( level8.length, level8[0].length, level8, level8Corrupt);
-        levels[9] = new SquareGroup( level9.length, level9[0].length, level9, level9Corrupt);
+        levels[0] = new SquareGroup(level0, level0Corrupt);
+        levels[1] = new SquareGroup(level1, level1Corrupt);
+        levels[2] = new SquareGroup(level2, level2Corrupt);
+        levels[3] = new SquareGroup(level3, level3Corrupt);
+        levels[4] = new SquareGroup(level4, level4Corrupt);
+        levels[5] = new SquareGroup(level5, level5Corrupt);
+        levels[6] = new SquareGroup(level6, level6Corrupt);
+        levels[7] = new SquareGroup(level7, level7Corrupt);
+        levels[8] = new SquareGroup(level8, level8Corrupt);
+        levels[9] = new SquareGroup(level9, level9Corrupt);
 
         camera = new OrthographicCamera();
         viewport = new ScreenViewport(camera);
@@ -173,24 +173,16 @@ public class LevelMenuScreen implements Screen {
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
-        assetManager = new AssetManager();
-        assetManager.load("uiskin.json", Skin.class,
-                new SkinLoader.SkinParameter("uiskin.atlas"));
-        assetManager.finishLoading();
-        Skin skin = assetManager.get("uiskin.json", Skin.class);
+        Skin skin = AssetsManager.getAssetsManager().getUISkin();
 
         table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
 
+        table.setBackground(AssetsManager.getAssetsManager().getDrawable(AssetsManager.BACKGROUND_COLOR));
+
         Table tableButtons = new Table();
         Table tableLevels = new Table();
-
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = new NinePatchDrawable(skin.getPatch("default-round-large"));
-        style.over = new NinePatchDrawable(skin.getPatch("default-over"));
-        style.down = new NinePatchDrawable(skin.getPatch("default-scroll"));
-        style.font = skin.getFont("default-font");
 
         TextButton button1 = new TextButton("Back", skin);
         button1.addListener(new ChangeListener() {
@@ -199,23 +191,21 @@ public class LevelMenuScreen implements Screen {
                 ScreenManager.getInstance(game).pop();
             }
         });
-
-        TextButton button2 = new TextButton("Settings", skin);
+        TextButton button2 = new TextButton("IAP", skin);
+        TextButton button3 = new TextButton("Settings", skin);
+        button3.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new SettingsScreen(game));
+            }
+        });
 
         ScrollPane scrollPane = new ScrollPane(tableLevels, skin);
 
-        for (int i = 0; i < 10; i++) {
-            Button button = new Button(skin);
-            Image image = new Image(new Texture(Gdx.files.internal("levels1.png")));
-            image.setScaling(Scaling.fit);
-            Label label = new Label("Level 1", skin);
+        for (int i = 1; i < 11; i++) {
+            TextButton button = new TextButton(Integer.toString(i), skin);
 
-            button.add(image).expand().fill();
-            button.row();
-            button.add(label);
-            button.pad(20);
-
-            final SquareGroup level = levels[i];
+            final SquareGroup level = levels[i-1];
 
             button.addListener(new ChangeListener() {
                 @Override
@@ -224,13 +214,16 @@ public class LevelMenuScreen implements Screen {
                 }
             });
 
-            tableLevels.add(button).minWidth(200).maxHeight(500).expand().fill().padRight(50);
-            tableLevels.row();
+            tableLevels.add(button).pad(20);
+            if (i%5 == 0) {
+                tableLevels.row();
+            }
         }
         tableLevels.pad(50);
 
-        tableButtons.add(button1).left().expand();
-        tableButtons.add(button2).right();
+        tableButtons.add(button1).left();
+        tableButtons.add(button2).center().expand();
+        tableButtons.add(button3).right();
         table.add(tableButtons).pad(10).expandX().fill();
         table.row().expand().fill();
         table.add(scrollPane);
@@ -250,7 +243,6 @@ public class LevelMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        assetManager.dispose();
         stage.dispose();
     }
 

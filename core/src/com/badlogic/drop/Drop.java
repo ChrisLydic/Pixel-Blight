@@ -15,6 +15,9 @@ public class Drop extends Game {
 		batch = new SpriteBatch();
 		//Use LibGDX's default Arial font.
 		font = new BitmapFont();
+
+		AssetsManager.getAssetsManager().loadAssets();
+
 		ScreenManager.getInstance(this).push(new MainMenuScreen(this));
 	}
 
@@ -23,6 +26,7 @@ public class Drop extends Game {
 	}
 
 	public void dispose() {
+		AssetsManager.getAssetsManager().dispose();
 		batch.dispose();
 		font.dispose();
 	}

@@ -1,26 +1,20 @@
 package com.badlogic.drop.screens;
 
-import com.badlogic.drop.ActionType;
-import com.badlogic.drop.Drop;
-import com.badlogic.drop.ScreenManager;
-import com.badlogic.drop.SquareGroup;
+import com.badlogic.drop.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -28,58 +22,50 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 
 public class GameScreen implements Screen {
-    final Drop game;
+    private final Drop game;
 
-    private Enum<ActionType> currentAction;
-
-    static final int WORLD_WIDTH = 100;
-    static final int WORLD_HEIGHT = 100;
+    private static final int WORLD_WIDTH = 100;
+    private static final int WORLD_HEIGHT = 100;
 
     private OrthographicCamera cam;
-    private SpriteBatch batch;
-    private AssetManager assetManager;
 
     private Stage stage;
     private Table table;
 
-    private Sprite mapSprite;
-    private Sprite other;
     private float rotationSpeed;
     private Viewport viewport;
 
-    SquareGroup squareGroup;
-
-    TextureRegion[][] tiles;
+    private SquareGroup squareGroup;
 
     private float tick = 0;
 
-    Vector3 touchPoint = new Vector3();
-    float x = 0;
-    float y = 0;
-    boolean isPressed;
-    ProgressBar progressBar;
+    private Vector3 touchPoint = new Vector3();
+    private float x = 0;
+    private float y = 0;
+    private boolean isPressed;
+    private ProgressBar progressBar;
 
-    public GameScreen(final Drop game, SquareGroup squareGroup) {
+    private Image touchAction;
+    private Image scatterAction;
+    private Image bombAction;
+    private Image cureAction;
+    private Label scatterLabel;
+    private Label bombLabel;
+    private Label cureLabel;
+
+    public GameScreen(final Drop game, final SquareGroup squareGroup) {
         this.game = game;
 
-        currentAction = ActionType.TAP;
+        ActionManager.getActionManager().reset();
 
-        assetManager = new AssetManager();
-        assetManager.load("uiskin.json", Skin.class,
-                new SkinLoader.SkinParameter("uiskin.atlas"));
-        assetManager.finishLoading();
-        Skin skin = assetManager.get("uiskin.json", Skin.class);
+        rotationSpeed = 0.7f;
 
-        rotationSpeed = 0.5f;
-
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-
-        tiles = new TextureRegion(new Texture(Gdx.files.internal("tiles2.png"))).split(64, 64);
-
+        //float w = Gdx.graphics.getWidth();
+        //float h = Gdx.graphics.getHeight();
+        //
         //mapSprite = new Sprite(new Texture(Gdx.files.internal("bucket.png")));
         //mapSprite.setPosition(WORLD_WIDTH/2 + 5, WORLD_HEIGHT/2);
-
+        //
         //other = new Sprite(new Texture(Gdx.files.internal("droplet.png")));
         //other.setPosition(WORLD_WIDTH/2, WORLD_HEIGHT/2);
 
@@ -102,21 +88,23 @@ public class GameScreen implements Screen {
         Table tableButtons = new Table();
         Table tableActions = new Table();
 
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = new NinePatchDrawable(skin.getPatch("default-round-large"));
-        style.over = new NinePatchDrawable(skin.getPatch("default-over"));
-        style.down = new NinePatchDrawable(skin.getPatch("default-scroll"));
-        style.font = skin.getFont("default-font");
+        Skin skin = AssetsManager.getAssetsManager().getUISkin();
 
-        TextButton button1 = new TextButton("Back", skin);
+        TextButton button1 = new TextButton("Pause", skin);
         button1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).pop();
+                ScreenManager.getInstance(game).push(new PauseScreen(game, squareGroup));
             }
         });
 
-        TextButton button2 = new TextButton("Settings", skin);
+        TextButton button2 = new TextButton("Store", skin);
+        button2.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new ShopScreen(game));
+            }
+        });
 
         progressBar = new ProgressBar(0, 1, 0.01f, false, skin);
         progressBar.setValue(1);
@@ -130,39 +118,39 @@ public class GameScreen implements Screen {
         Table tableBombAction = new Table();
         Table tableCureAction = new Table();
 
-        TextButton touchAction = new TextButton("H", skin);
-        TextButton scatterAction = new TextButton("S", skin);
-        TextButton bombAction = new TextButton("B", skin);
-        TextButton cureAction = new TextButton("C", skin);
+        touchAction = new Image(AssetsManager.getAssetsManager().getDrawable("tap-1"));
+        scatterAction = new Image(AssetsManager.getAssetsManager().getDrawable("scatter-1"));
+        bombAction = new Image(AssetsManager.getAssetsManager().getDrawable("bomb-1"));
+        cureAction = new Image(AssetsManager.getAssetsManager().getDrawable("cure-1"));
 
-        touchAction.addListener(new ChangeListener() {
+        touchAction.addListener(new ClickListener(){
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                currentAction = ActionType.TAP;
+            public void clicked(InputEvent event, float x, float y) {
+                ActionManager.getActionManager().setCurrentAction(ActionManager.ActionType.TAP);
             }
         });
-        scatterAction.addListener(new ChangeListener() {
+        scatterAction.addListener(new ClickListener(){
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                currentAction = ActionType.SCATTER;
+            public void clicked(InputEvent event, float x, float y) {
+                ActionManager.getActionManager().setCurrentAction(ActionManager.ActionType.SCATTER);
             }
         });
-        bombAction.addListener(new ChangeListener() {
+        bombAction.addListener(new ClickListener(){
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                currentAction = ActionType.BOMB;
+            public void clicked(InputEvent event, float x, float y) {
+                ActionManager.getActionManager().setCurrentAction(ActionManager.ActionType.BOMB);
             }
         });
-        cureAction.addListener(new ChangeListener() {
+        cureAction.addListener(new ClickListener(){
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                currentAction = ActionType.CURE;
+            public void clicked(InputEvent event, float x, float y) {
+                ActionManager.getActionManager().setCurrentAction(ActionManager.ActionType.CURE);
             }
         });
 
-        Label scatterLabel = new Label("10", skin);
-        Label bombLabel = new Label("10", skin);
-        Label cureLabel = new Label("10", skin);
+        scatterLabel = new Label(Integer.toString(ActionManager.getActionManager().getScatterCount()), skin);
+        bombLabel = new Label(Integer.toString(ActionManager.getActionManager().getBombCount()), skin);
+        cureLabel = new Label(Integer.toString(ActionManager.getActionManager().getCureCount()), skin);
 
         tableTouchAction.add(touchAction);
 
@@ -192,15 +180,13 @@ public class GameScreen implements Screen {
         this.squareGroup = squareGroup;
 
         isPressed = false;
-
-        batch = new SpriteBatch();
     }
 
     @Override
     public void render (float delta) {
         handleInput();
         cam.update();
-        batch.setProjectionMatrix(cam.combined);
+        game.batch.setProjectionMatrix(cam.combined);
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -212,11 +198,10 @@ public class GameScreen implements Screen {
             squareGroup.setOrigin(x,y);
         }
 
-        batch.begin();
-        squareGroup.draw(batch, tiles);
-        batch.end();
+        game.batch.begin();
+        squareGroup.draw(game.batch, delta);
+        game.batch.end();
 
-        Gdx.app.log("", squareGroup.getProgress()+"");
         progressBar.setValue(squareGroup.getProgress());
 
         if (squareGroup.isWon()) {
@@ -228,7 +213,8 @@ public class GameScreen implements Screen {
                 if (!isPressed) {
                     isPressed = true;
                     cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-                    squareGroup.touched(touchPoint.x, touchPoint.y, currentAction);
+                    squareGroup.touched(touchPoint.x, touchPoint.y);
+                    updateActionUI();
                 }
             } else {
                 isPressed = false;
@@ -284,7 +270,7 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         x = 0; y = 0;
-        stage.getViewport().update(width, height);
+        stage.getViewport().update(width, height, true);
         viewport.update(width, height, true);
         cam.zoom = WORLD_WIDTH;
         cam.update();
@@ -292,14 +278,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void resume() {
+
     }
 
     @Override
     public void dispose() {
-        //mapSprite.getTexture().dispose();
-        batch.dispose();
         stage.dispose();
-        assetManager.dispose();
     }
 
     @Override
@@ -312,9 +296,49 @@ public class GameScreen implements Screen {
         // when the screen is shown
 //        rainMusic.play();
         Gdx.input.setInputProcessor(stage);
+
+        updateActionUI();
     }
 
     @Override
     public void hide() {
+    }
+
+    private void updateActionUI() {
+        touchAction.setDrawable(AssetsManager.getAssetsManager().getDrawable("tap-" + ActionManager.getActionManager().getTapLevel()));
+        scatterAction.setDrawable(AssetsManager.getAssetsManager().getDrawable("scatter-" + ActionManager.getActionManager().getScatterLevel()));
+        bombAction.setDrawable(AssetsManager.getAssetsManager().getDrawable("bomb-" + ActionManager.getActionManager().getBombLevel()));
+        cureAction.setDrawable(AssetsManager.getAssetsManager().getDrawable("cure-" + ActionManager.getActionManager().getCureLevel()));
+
+        scatterLabel.setText(Integer.toString(ActionManager.getActionManager().getScatterCount()));
+        bombLabel.setText(Integer.toString(ActionManager.getActionManager().getBombCount()));
+        cureLabel.setText(Integer.toString(ActionManager.getActionManager().getCureCount()));
+
+        if (ActionManager.getActionManager().getScatterCount() == 0) {
+            if (ActionManager.getActionManager().getCurrentAction() == ActionManager.ActionType.SCATTER) {
+                ActionManager.getActionManager().setCurrentAction(ActionManager.ActionType.TAP);
+            }
+            scatterAction.setTouchable(Touchable.disabled);
+        } else {
+            scatterAction.setTouchable(Touchable.enabled);
+        }
+
+        if (ActionManager.getActionManager().getBombCount() == 0) {
+            if (ActionManager.getActionManager().getCurrentAction() == ActionManager.ActionType.BOMB) {
+                ActionManager.getActionManager().setCurrentAction(ActionManager.ActionType.TAP);
+            }
+            bombAction.setTouchable(Touchable.disabled);
+        } else {
+            bombAction.setTouchable(Touchable.enabled);
+        }
+
+        if (ActionManager.getActionManager().getCureCount() == 0) {
+            if (ActionManager.getActionManager().getCurrentAction() == ActionManager.ActionType.CURE) {
+                ActionManager.getActionManager().setCurrentAction(ActionManager.ActionType.TAP);
+            }
+            cureAction.setTouchable(Touchable.disabled);
+        } else {
+            cureAction.setTouchable(Touchable.enabled);
+        }
     }
 }

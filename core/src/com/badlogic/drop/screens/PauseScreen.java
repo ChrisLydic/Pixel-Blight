@@ -1,18 +1,18 @@
 package com.badlogic.drop.screens;
 
-import com.badlogic.drop.AssetsManager;
-import com.badlogic.drop.Drop;
-import com.badlogic.drop.ScreenManager;
+import com.badlogic.drop.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Scaling;
@@ -20,17 +20,18 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
- * Created by chris on 5/28/2017.
+ * Created by chris on 5/13/2017.
  */
-public class LevelGroupMenuScreen implements Screen {
+public class PauseScreen implements Screen {
     final Drop game;
     OrthographicCamera camera;
     Viewport viewport;
 
     private Stage stage;
     private Table table;
+    private Texture background;
 
-    public LevelGroupMenuScreen(final Drop game) {
+    public PauseScreen(final Drop game, final SquareGroup squareGroup) {
         this.game = game;
 
         camera = new OrthographicCamera();
@@ -40,65 +41,57 @@ public class LevelGroupMenuScreen implements Screen {
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
+        background = AssetsManager.getAssetsManager().getTexture(AssetsManager.MAIN_BACKGROUND);
+
+        Skin skin = AssetsManager.getAssetsManager().getUISkin();
+
         table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
 
-        Table tableButtons = new Table();
-        Table tableLevels = new Table();
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+        style.up = new NinePatchDrawable(skin.getPatch("default-round-large"));
+        style.over = new NinePatchDrawable(skin.getPatch("default-over"));
+        style.down = new NinePatchDrawable(skin.getPatch("default-scroll"));
+        style.font = skin.getFont("default-font");
 
-        table.setBackground(AssetsManager.getAssetsManager().getDrawable(AssetsManager.BACKGROUND_COLOR));
-
-        Skin skin = AssetsManager.getAssetsManager().getUISkin();
-
-        TextButton button1 = new TextButton("Back", skin);
+        TextButton button1 = new TextButton("Quit", skin);
         button1.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).pop(2);
+            }
+        });
+
+        TextButton button2 = new TextButton("Return", skin);
+        button2.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).pop();
             }
         });
-        TextButton button2 = new TextButton("IAP", skin);
-        TextButton button3 = new TextButton("Settings", skin);
+
+        TextButton button3 = new TextButton("Replay", skin);
         button3.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                squareGroup.reset();
+                ScreenManager.getInstance(game).pop();
+            }
+        });
+
+        TextButton button4 = new TextButton("Settings", skin);
+        button4.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).push(new SettingsScreen(game));
             }
         });
 
-        ScrollPane scrollPane = new ScrollPane(tableLevels, skin);
-
-        for (int i = 0; i < 10; i++) {
-            Button button = new Button(skin);
-            Image image = new Image(AssetsManager.getAssetsManager().getTexture(AssetsManager.LEVELS_1));
-            image.setScaling(Scaling.fit);
-            Label label = new Label("Level 1", skin);
-
-            button.add(image).expand().fill();
-            button.row();
-            button.add(label);
-            button.pad(20);
-
-            button.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    ScreenManager.getInstance(game).push(new LevelMenuScreen(game, ""));
-                }
-            });
-
-            tableLevels.add(button).minWidth(200).maxHeight(500).expand().fill().padRight(50);
-        }
-        tableLevels.pad(50);
-
-        table.setBackground(AssetsManager.getAssetsManager().getDrawable(AssetsManager.WORLD_MAP));
-
-        tableButtons.add(button1).left();
-        tableButtons.add(button2).center().expand();
-        tableButtons.add(button3).right();
-        table.add(tableButtons).pad(10).expandX().fill();
-        table.row().expand().fill();
-        table.add(scrollPane);
+        table.add(button1).pad(20);
+        table.add(button2).pad(20);
+        table.add(button3).pad(20);
+        table.add(button4).pad(20);
     }
 
     @Override
@@ -108,6 +101,13 @@ public class LevelGroupMenuScreen implements Screen {
 
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
+
+        float x = viewport.unproject(new Vector3(viewport.getScreenWidth(), viewport.getScreenHeight(), 0)).x;
+        float y = viewport.unproject(new Vector3(viewport.getScreenX(), viewport.getScreenY(), 0)).y;
+
+        game.batch.begin();
+        game.batch.draw(background, 0, y - (x * 0.9583333333333334f), x, x * 0.9583333333333334f );
+        game.batch.end();
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -132,7 +132,6 @@ public class LevelGroupMenuScreen implements Screen {
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -145,4 +144,3 @@ public class LevelGroupMenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
     }
 }
-
