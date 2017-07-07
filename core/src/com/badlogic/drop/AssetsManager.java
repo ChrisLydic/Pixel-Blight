@@ -7,12 +7,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /**
  * Created by chris on 6/15/2017.
  */
 public class AssetsManager {
     private static AssetsManager assetsManager;
+    public static final int SMALL_PADDING = 10;
+
     public static final int SIZE = 10;
     public static final int NORMAL_TILE = 0;
     public static final int DARK_TILE = 1;
@@ -162,7 +165,11 @@ public class AssetsManager {
     }
 
     public Sprite getSprite(String spriteName) {
-        return assetManager.get(spriteName, Sprite.class);
+        try {
+            return assetManager.get(spriteName, Sprite.class);
+        } catch (GdxRuntimeException ex) {
+            return assetManager.get(UI_SKIN, Skin.class).getSprite(spriteName); //TODO get rid of this shit
+        }
     }
 
     public Texture getTexture(String textureName) {
@@ -182,6 +189,10 @@ public class AssetsManager {
             default:
                 throw new IllegalArgumentException(effectName);
         }
+    }
+
+    public int getPadding() {
+        return SMALL_PADDING;
     }
 
     public void dispose() {

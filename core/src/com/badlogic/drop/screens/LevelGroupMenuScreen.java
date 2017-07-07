@@ -10,6 +10,8 @@ import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -27,8 +29,24 @@ public class LevelGroupMenuScreen implements Screen {
     OrthographicCamera camera;
     Viewport viewport;
 
+    private Sprite world;
     private Stage stage;
     private Table table;
+    private TextButton button1;
+    private TextButton area1;
+    private TextButton area2;
+    private TextButton area3;
+    private TextButton area4;
+    private TextButton area5;
+    private TextButton area6;
+    private TextButton area7;
+    private TextButton area8;
+    private TextButton area9;
+    private TextButton area10;
+    private float x;
+    private float y;
+    private float width;
+    private float height;
 
     public LevelGroupMenuScreen(final Drop game) {
         this.game = game;
@@ -44,14 +62,13 @@ public class LevelGroupMenuScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        Table tableButtons = new Table();
-        Table tableLevels = new Table();
-
-        table.setBackground(AssetsManager.getAssetsManager().getDrawable(AssetsManager.BACKGROUND_COLOR));
+        world = AssetsManager.getAssetsManager().getSprite(AssetsManager.WORLD_MAP);
+        x = 0;
+        y = 0;
 
         Skin skin = AssetsManager.getAssetsManager().getUISkin();
 
-        TextButton button1 = new TextButton("Back", skin);
+        button1 = new TextButton("Back", skin);
         button1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -67,47 +84,75 @@ public class LevelGroupMenuScreen implements Screen {
             }
         });
 
-        ScrollPane scrollPane = new ScrollPane(tableLevels, skin);
+        table.add(button1).pad(AssetsManager.getAssetsManager().getPadding()).left().top();
+        table.add(button2).padTop(AssetsManager.getAssetsManager().getPadding()).center().expandX().top();
+        table.add(button3).pad(AssetsManager.getAssetsManager().getPadding()).right().top();
+        table.top();
 
-        for (int i = 0; i < 10; i++) {
-            Button button = new Button(skin);
-            Image image = new Image(AssetsManager.getAssetsManager().getTexture(AssetsManager.LEVELS_1));
-            image.setScaling(Scaling.fit);
-            Label label = new Label("Level 1", skin);
+        area1 = new TextButton("1", skin);
+        stage.addActor(area1);
 
-            button.add(image).expand().fill();
-            button.row();
-            button.add(label);
-            button.pad(20);
+        area2 = new TextButton("2", skin);
+        stage.addActor(area2);
 
-            button.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    ScreenManager.getInstance(game).push(new LevelMenuScreen(game, ""));
-                }
-            });
+        area3 = new TextButton("3", skin);
+        stage.addActor(area3);
 
-            tableLevels.add(button).minWidth(200).maxHeight(500).expand().fill().padRight(50);
-        }
-        tableLevels.pad(50);
+        area4 = new TextButton("4", skin);
+        stage.addActor(area4);
 
-        table.setBackground(AssetsManager.getAssetsManager().getDrawable(AssetsManager.WORLD_MAP));
+        area5 = new TextButton("5", skin);
+        stage.addActor(area5);
 
-        tableButtons.add(button1).left();
-        tableButtons.add(button2).center().expand();
-        tableButtons.add(button3).right();
-        table.add(tableButtons).pad(10).expandX().fill();
-        table.row().expand().fill();
-        table.add(scrollPane);
+        area6 = new TextButton("6", skin);
+        stage.addActor(area6);
+
+        area7 = new TextButton("7", skin);
+        stage.addActor(area7);
+
+        area8 = new TextButton("8", skin);
+        stage.addActor(area8);
+
+        area9 = new TextButton("9", skin);
+        stage.addActor(area9);
+
+        area10 = new TextButton("10", skin);
+        stage.addActor(area10);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 212/255f, 247/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
+
+        if (x == 0 && y == 0) {
+            x = viewport.unproject(new Vector3(viewport.getScreenWidth(), viewport.getScreenHeight(), 0)).x;
+            y = viewport.unproject(new Vector3(viewport.getScreenX(), viewport.getScreenY(), 0)).y;
+
+            height =  y - (button1.getHeight() + (y * 0.1f) + AssetsManager.getAssetsManager().getPadding() * 2);
+            width = height * 1.7115384615384615f;
+
+            x = x / 2 - (x * 0.4f);
+            y = (y * 0.05f);
+        }
+
+        game.batch.begin();
+        game.batch.draw(world, x, y, width, height);
+        game.batch.end();
+
+        area1.setPosition((0.07865169f * width) + x - (area1.getWidth() / 2), (0.65384615f * height) + y - (area1.getHeight() / 2));
+        area2.setPosition((0.20224719f * width) + x - (area2.getWidth() / 2), (0.48076923f * height) + y - (area2.getHeight() / 2));
+        area3.setPosition((0.25842697f * width) + x - (area3.getWidth() / 2), (0.88461538f * height) + y - (area3.getHeight() / 2));
+        area4.setPosition((0.30337079f * width) + x - (area4.getWidth() / 2), (0.55769231f * height) + y - (area4.getHeight() / 2));
+        area5.setPosition((0.3258427f * width) + x - (area5.getWidth() / 2), (0.25f * height) + y - (area5.getHeight() / 2));
+        area6.setPosition((0.528089887f * width) + x - (area6.getWidth() / 2), (0.42307692f * height) + y - (area6.getHeight() / 2));
+        area7.setPosition((0.752808f * width) + x - (area7.getWidth() / 2), (0.5769230769f * height) + y - (area7.getHeight() / 2));
+        area8.setPosition((0.68539325f * width) + x - (area8.getWidth() / 2), (0.346153846f * height) + y - (area8.getHeight() / 2));
+        area9.setPosition((0.80898876f * width) + x - (area9.getWidth() / 2), (0.173076923f * height) + y - (area9.getHeight() / 2));
+        area10.setPosition((0.505617977f * width) + x - (area10.getWidth() / 2), (0.90384615f * height) + y - (area10.getHeight() / 2));
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -128,6 +173,9 @@ public class LevelGroupMenuScreen implements Screen {
         stage.getViewport().update(width, height);
         viewport.update(width, height, true);
         camera.update();
+
+        x = 0;
+        y = 0;
     }
 
     @Override

@@ -109,8 +109,8 @@ public class GameScreen implements Screen {
         progressBar = new ProgressBar(0, 1, 0.01f, false, skin);
         progressBar.setValue(1);
 
-        tableButtons.add(button1).padRight(10).left();
-        tableButtons.add(button2).padRight(10).left().expand();
+        tableButtons.add(button1).padRight(AssetsManager.getAssetsManager().getPadding()).left();
+        tableButtons.add(button2).padRight(AssetsManager.getAssetsManager().getPadding()).left().expand();
         tableButtons.add(progressBar).right();
 
         Table tableTouchAction = new Table();
@@ -173,9 +173,9 @@ public class GameScreen implements Screen {
         tableActions.add(tableCureAction);
 
         table.top().left();
-        table.add(tableButtons).pad(10).expandX().fill();
+        table.add(tableButtons).pad(AssetsManager.getAssetsManager().getPadding()).expandX().fill();
         table.row();
-        table.add(tableActions).left().expandY().fillY().padLeft(10);
+        table.add(tableActions).left().expandY().fillY().padLeft(AssetsManager.getAssetsManager().getPadding());
 
         this.squareGroup = squareGroup;
 

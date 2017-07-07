@@ -34,6 +34,8 @@ public class MainMenuScreen implements Screen {
     private Table table;
     private Texture logo;
     private Texture background;
+    private float x;
+    private float y;
 
     public MainMenuScreen(final Drop game) {
         this.game = game;
@@ -95,12 +97,10 @@ public class MainMenuScreen implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
-        float x = viewport.unproject(new Vector3(viewport.getScreenWidth(), viewport.getScreenHeight(), 0)).x;
-        float y = viewport.unproject(new Vector3(viewport.getScreenX(), viewport.getScreenY(), 0)).y;
+        x = viewport.unproject(new Vector3(viewport.getScreenWidth(), viewport.getScreenHeight(), 0)).x;
+        y = viewport.unproject(new Vector3(viewport.getScreenX(), viewport.getScreenY(), 0)).y;
 
         game.batch.begin();
-//        game.batch.draw(logo, x / 2 - (x * 0.4f), (y * 0.95f) - ((int)(x * 0.8 * 0.15053763440860216)),
-//                (int)(x * 0.8), (int)(x * 0.8 * 0.15053763440860216));
         game.batch.draw(background, 0, y - (x * 0.9583333333333334f), x, x * 0.9583333333333334f );
         game.batch.end();
 

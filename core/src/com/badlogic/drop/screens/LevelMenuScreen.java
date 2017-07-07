@@ -224,7 +224,7 @@ public class LevelMenuScreen implements Screen {
         tableButtons.add(button1).left();
         tableButtons.add(button2).center().expand();
         tableButtons.add(button3).right();
-        table.add(tableButtons).pad(10).expandX().fill();
+        table.add(tableButtons).pad(AssetsManager.getAssetsManager().getPadding()).expandX().fill();
         table.row().expand().fill();
         table.add(scrollPane);
     }

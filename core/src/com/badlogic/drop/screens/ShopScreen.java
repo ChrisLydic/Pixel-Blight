@@ -176,25 +176,25 @@ public class ShopScreen implements Screen {
         });
 
         tableActions.add(tapButton).size(80)
-                .padBottom(20)
-                .padLeft(10)
-                .padRight(10)
-                .padTop(20);
+                .padBottom(AssetsManager.getAssetsManager().getPadding() * 2)
+                .padLeft(AssetsManager.getAssetsManager().getPadding())
+                .padRight(AssetsManager.getAssetsManager().getPadding())
+                .padTop(AssetsManager.getAssetsManager().getPadding() * 2);
         tableActions.row();
         tableActions.add(scatterButton).size(80)
-                .padBottom(20)
-                .padLeft(10)
-                .padRight(10);
+                .padBottom(AssetsManager.getAssetsManager().getPadding() * 2)
+                .padLeft(AssetsManager.getAssetsManager().getPadding())
+                .padRight(AssetsManager.getAssetsManager().getPadding());
         tableActions.row();
         tableActions.add(bombButton).size(80)
-                .padBottom(20)
-                .padLeft(10)
-                .padRight(10);
+                .padBottom(AssetsManager.getAssetsManager().getPadding() * 2)
+                .padLeft(AssetsManager.getAssetsManager().getPadding())
+                .padRight(AssetsManager.getAssetsManager().getPadding());
         tableActions.row();
         tableActions.add(cureButton).size(80)
-                .padLeft(10)
-                .padRight(10);
-        tableActions.pad(10).top();
+                .padLeft(AssetsManager.getAssetsManager().getPadding())
+                .padRight(AssetsManager.getAssetsManager().getPadding());
+        tableActions.pad(AssetsManager.getAssetsManager().getPadding()).top();
 
         Label tapLabel = new Label("Tap", skin);
         Label tapDescription = new Label("Tap description", skin);
@@ -267,14 +267,14 @@ public class ShopScreen implements Screen {
         tapUpgrade3Disabled.setScaling(Scaling.fit);
         tapUpgrade3Current = tapUpgrade3Disabled;
 
-        tableTapAction.row().pad(10);
+        tableTapAction.row().pad(AssetsManager.getAssetsManager().getPadding());
         tableTapAction.add(tapUpgrade1Current).expand().uniform().fill();
         tableTapAction.add(tapUpgrade2Current).expand().uniform().fill();
         tableTapAction.add(tapUpgrade3Current).expand().uniform().fill();
         tableTapAction.row();
         tableTapAction.add(tapLabel).colspan(3).left().expandX();
         tableTapAction.row();
-        tableTapAction.add(tapDescription).colspan(3).top().left().pad(10).expand().fill();
+        tableTapAction.add(tapDescription).colspan(3).top().left().pad(AssetsManager.getAssetsManager().getPadding()).expand().fill();
         tableTapAction.row();
         tableTapAction.add(tapButtonUpgrade).colspan(3).expandX().fillX();
 
@@ -316,10 +316,10 @@ public class ShopScreen implements Screen {
         });
         tableScatterAction.add(scatterLabel).colspan(2).left().expandX();
         tableScatterAction.row();
-        tableScatterAction.add(scatterDescription).colspan(2).top().left().pad(10).expand().fill();
+        tableScatterAction.add(scatterDescription).colspan(2).top().left().pad(AssetsManager.getAssetsManager().getPadding()).expand().fill();
         tableScatterAction.row();
-        tableScatterAction.add(scatterButtonBuy).padRight(10).expandX().fillX().uniform();
-        tableScatterAction.add(scatterButtonUpgrade).padLeft(10).expandX().fillX().uniform();
+        tableScatterAction.add(scatterButtonBuy).padRight(AssetsManager.getAssetsManager().getPadding()).expandX().fillX().uniform();
+        tableScatterAction.add(scatterButtonUpgrade).padLeft(AssetsManager.getAssetsManager().getPadding()).expandX().fillX().uniform();
 
         Label bombLabel = new Label("Bomb", skin);
         Label bombDescription = new Label("Bomb description", skin);
@@ -359,10 +359,10 @@ public class ShopScreen implements Screen {
         });
         tableBombAction.add(bombLabel).colspan(2).left().expandX();
         tableBombAction.row();
-        tableBombAction.add(bombDescription).colspan(2).top().left().pad(10).expand().fill();
+        tableBombAction.add(bombDescription).colspan(2).top().left().pad(AssetsManager.getAssetsManager().getPadding()).expand().fill();
         tableBombAction.row();
-        tableBombAction.add(bombButtonBuy).padRight(10).expandX().fillX().uniform();
-        tableBombAction.add(bombButtonUpgrade).padLeft(10).expandX().fillX().uniform();
+        tableBombAction.add(bombButtonBuy).padRight(AssetsManager.getAssetsManager().getPadding()).expandX().fillX().uniform();
+        tableBombAction.add(bombButtonUpgrade).padLeft(AssetsManager.getAssetsManager().getPadding()).expandX().fillX().uniform();
 
         Label cureLabel = new Label("Cure", skin);
         Label cureDescription = new Label("Cure description", skin);
@@ -402,10 +402,10 @@ public class ShopScreen implements Screen {
         });
         tableCureAction.add(cureLabel).colspan(2).left().expandX();
         tableCureAction.row();
-        tableCureAction.add(cureDescription).colspan(2).top().left().pad(10).expand().fill();
+        tableCureAction.add(cureDescription).colspan(2).top().left().pad(AssetsManager.getAssetsManager().getPadding()).expand().fill();
         tableCureAction.row();
-        tableCureAction.add(cureButtonBuy).padRight(10).expandX().fillX().uniform();
-        tableCureAction.add(cureButtonUpgrade).padLeft(10).expandX().fillX().uniform();
+        tableCureAction.add(cureButtonBuy).padRight(AssetsManager.getAssetsManager().getPadding()).expandX().fillX().uniform();
+        tableCureAction.add(cureButtonUpgrade).padLeft(AssetsManager.getAssetsManager().getPadding()).expandX().fillX().uniform();
 
         // build main tables
         tableButtons.add(button1).left();
@@ -414,10 +414,10 @@ public class ShopScreen implements Screen {
 
         tableCurrentAction = tableTapAction;
 
-        table.add(tableButtons).colspan(2).pad(10).expandX().fill();
+        table.add(tableButtons).colspan(2).pad(AssetsManager.getAssetsManager().getPadding()).expandX().fill();
         table.row();
         table.add(scrollPane).expandY().fillY();
-        table.add(tableTapAction).pad(10).expand().fill();
+        table.add(tableTapAction).pad(AssetsManager.getAssetsManager().getPadding()).expand().fill();
     }
 
     @Override
