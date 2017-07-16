@@ -33,16 +33,16 @@ public class LevelGroupMenuScreen implements Screen {
     private Stage stage;
     private Table table;
     private TextButton button1;
-    private TextButton area1;
-    private TextButton area2;
-    private TextButton area3;
-    private TextButton area4;
-    private TextButton area5;
-    private TextButton area6;
-    private TextButton area7;
-    private TextButton area8;
-    private TextButton area9;
-    private TextButton area10;
+    private Button area1;
+    private Button area2;
+    private Button area3;
+    private Button area4;
+    private Button area5;
+    private Button area6;
+    private Button area7;
+    private Button area8;
+    private Button area9;
+    private Button area10;
     private float x;
     private float y;
     private float width;
@@ -89,34 +89,95 @@ public class LevelGroupMenuScreen implements Screen {
         table.add(button3).pad(AssetsManager.getAssetsManager().getPadding()).right().top();
         table.top();
 
-        area1 = new TextButton("1", skin);
+        area1 = new Button(skin, "world-1-style");
+        area1.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "1"));
+            }
+        });
         stage.addActor(area1);
 
-        area2 = new TextButton("2", skin);
+
+        area2 = new Button(skin, "world-2-style");
+        area2.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "2"));
+            }
+        });
         stage.addActor(area2);
 
-        area3 = new TextButton("3", skin);
+        area3 = new Button(skin, "world-3-style");
+        area3.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "3"));
+            }
+        });
         stage.addActor(area3);
 
-        area4 = new TextButton("4", skin);
+        area4 = new Button(skin, "world-4-style");
+        area4.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "4"));
+            }
+        });
         stage.addActor(area4);
 
-        area5 = new TextButton("5", skin);
+        area5 = new Button(skin, "world-5-style");
+        area5.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "5"));
+            }
+        });
         stage.addActor(area5);
 
-        area6 = new TextButton("6", skin);
+        area6 = new Button(skin, "world-6-style");
+        area6.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "6"));
+            }
+        });
         stage.addActor(area6);
 
-        area7 = new TextButton("7", skin);
+        area7 = new Button(skin, "world-7-style");
+        area7.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "7"));
+            }
+        });
         stage.addActor(area7);
 
-        area8 = new TextButton("8", skin);
+        area8 = new Button(skin, "world-8-style");
+        area8.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "8"));
+            }
+        });
         stage.addActor(area8);
 
-        area9 = new TextButton("9", skin);
+        area9 = new Button(skin, "world-9-style");
+        area9.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "9"));
+            }
+        });
         stage.addActor(area9);
 
-        area10 = new TextButton("10", skin);
+        area10 = new Button(skin, "world-10-style");
+        area10.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "10"));
+            }
+        });
         stage.addActor(area10);
     }
 
@@ -135,7 +196,7 @@ public class LevelGroupMenuScreen implements Screen {
             height =  y - (button1.getHeight() + (y * 0.1f) + AssetsManager.getAssetsManager().getPadding() * 2);
             width = height * 1.7115384615384615f;
 
-            x = x / 2 - (x * 0.4f);
+            x = x / 2 - (width / 2);
             y = (y * 0.05f);
         }
 
@@ -143,16 +204,16 @@ public class LevelGroupMenuScreen implements Screen {
         game.batch.draw(world, x, y, width, height);
         game.batch.end();
 
-        area1.setPosition((0.07865169f * width) + x - (area1.getWidth() / 2), (0.65384615f * height) + y - (area1.getHeight() / 2));
-        area2.setPosition((0.20224719f * width) + x - (area2.getWidth() / 2), (0.48076923f * height) + y - (area2.getHeight() / 2));
-        area3.setPosition((0.25842697f * width) + x - (area3.getWidth() / 2), (0.88461538f * height) + y - (area3.getHeight() / 2));
-        area4.setPosition((0.30337079f * width) + x - (area4.getWidth() / 2), (0.55769231f * height) + y - (area4.getHeight() / 2));
-        area5.setPosition((0.3258427f * width) + x - (area5.getWidth() / 2), (0.25f * height) + y - (area5.getHeight() / 2));
-        area6.setPosition((0.528089887f * width) + x - (area6.getWidth() / 2), (0.42307692f * height) + y - (area6.getHeight() / 2));
-        area7.setPosition((0.752808f * width) + x - (area7.getWidth() / 2), (0.5769230769f * height) + y - (area7.getHeight() / 2));
-        area8.setPosition((0.68539325f * width) + x - (area8.getWidth() / 2), (0.346153846f * height) + y - (area8.getHeight() / 2));
-        area9.setPosition((0.80898876f * width) + x - (area9.getWidth() / 2), (0.173076923f * height) + y - (area9.getHeight() / 2));
-        area10.setPosition((0.505617977f * width) + x - (area10.getWidth() / 2), (0.90384615f * height) + y - (area10.getHeight() / 2));
+        area1.setPosition((0.07865169f * width) + x - (area1.getWidth() / 2), (0.65384615f * height) + y);
+        area2.setPosition((0.20224719f * width) + x - (area2.getWidth() / 2), (0.48076923f * height) + y);
+        area3.setPosition((0.25842697f * width) + x - (area3.getWidth() / 2), (0.88461538f * height) + y);
+        area4.setPosition((0.34337079f * width) + x - (area4.getWidth() / 2), (0.57769231f * height) + y);
+        area5.setPosition((0.3258427f * width) + x - (area5.getWidth() / 2), (0.25f * height) + y);
+        area6.setPosition((0.528089887f * width) + x - (area6.getWidth() / 2), (0.42307692f * height) + y);
+        area7.setPosition((0.752808f * width) + x - (area7.getWidth() / 2), (0.5769230769f * height) + y);
+        area8.setPosition((0.68539325f * width) + x - (area8.getWidth() / 2), (0.346153846f * height) + y);
+        area9.setPosition((0.80898876f * width) + x - (area9.getWidth() / 2), (0.173076923f * height) + y);
+        area10.setPosition((0.505617977f * width) + x - (area10.getWidth() / 2), (0.80384615f * height) + y);
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();

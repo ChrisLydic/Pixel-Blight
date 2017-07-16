@@ -11,6 +11,16 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: { down: default-round-down, up: default-round },
+	world-1-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-2-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-3-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-4-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-5-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-6-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-7-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-8-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-9-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
+	world-10-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
 	toggle: { down: default-round-down, checked: default-round-down, up: default-round }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {

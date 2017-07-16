@@ -83,29 +83,29 @@ default-rect-down
   index: -1
 default-round
   rotate: false
-  xy: 93, 1
-  size: 24, 24
-  split: 6, 6, 4, 12
-  pad: 12, 12, 4, 12
-  orig: 12, 20
+  xy: 91, 1
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 16, 18, 6, 18
+  orig: 36, 36
   offset: 0, 0
   index: -1
 default-round-down
   rotate: false
-  xy: 118, 1
-  size: 24, 24
-  split: 6, 6, 6, 8
-  pad: 12, 12, 8, 8
-  orig: 12, 20
+  xy: 128, 1
+  size: 36, 36
+  split: 9, 9, 9, 12
+  pad: 16, 18, 10, 14
+  orig: 36, 36
   offset: 0, 0
   index: -1
 disabled-button
   rotate: false
-  xy: 143, 1
-  size: 24, 24
-  split: 6, 6, 4, 12
-  pad: 12, 12, 4, 12
-  orig: 12, 20
+  xy: 165, 1
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 16, 18, 6, 18
+  orig: 36, 36
   offset: 0, 0
   index: -1
 default-round-large
@@ -660,5 +660,26 @@ world-map
   xy: 384, 108
   size: 89, 52
   orig: 89, 52
+  offset: 0, 0
+  index: -1
+world-1
+  rotate: false
+  xy: 308, 1
+  size: 66, 78
+  orig: 66, 78
+  offset: 0, 0
+  index: -1
+world-1-down
+  rotate: false
+  xy: 375, 1
+  size: 66, 78
+  orig: 66, 78
+  offset: 0, 0
+  index: -1
+world-1-disabled
+  rotate: false
+  xy: 442, 1
+  size: 66, 78
+  orig: 66, 78
   offset: 0, 0
   index: -1

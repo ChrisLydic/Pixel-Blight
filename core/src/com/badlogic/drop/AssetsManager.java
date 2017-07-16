@@ -143,7 +143,7 @@ public class AssetsManager {
                 assetManager.get("tiles2.png", Texture.class)
             ).split(32, 32);
 
-        assetManager.get(UI_SKIN, Skin.class).getFont("default-font").getData().setScale(1.25f);
+        assetManager.get(UI_SKIN, Skin.class).getFont("default-font").getData().setScale(1.5f);
     }
 
     public TextureRegion[][] getTiles() {
