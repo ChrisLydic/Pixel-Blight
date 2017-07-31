@@ -1,8 +1,6 @@
 package com.badlogic.drop.screens;
 
-import com.badlogic.drop.AssetsManager;
-import com.badlogic.drop.Drop;
-import com.badlogic.drop.ScreenManager;
+import com.badlogic.drop.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -17,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -93,7 +92,7 @@ public class LevelGroupMenuScreen implements Screen {
         area1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "1"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, DataAccess.getInstance().getWorlds().first()));
             }
         });
         stage.addActor(area1);
@@ -103,81 +102,90 @@ public class LevelGroupMenuScreen implements Screen {
         area2.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "2"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area2.setDisabled(true);
         stage.addActor(area2);
 
         area3 = new Button(skin, "world-3-style");
         area3.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "3"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area3.setDisabled(true);
         stage.addActor(area3);
 
         area4 = new Button(skin, "world-4-style");
         area4.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "4"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area4.setDisabled(true);
         stage.addActor(area4);
 
         area5 = new Button(skin, "world-5-style");
         area5.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "5"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area5.setDisabled(true);
         stage.addActor(area5);
 
         area6 = new Button(skin, "world-6-style");
         area6.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "6"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area6.setDisabled(true);
         stage.addActor(area6);
 
         area7 = new Button(skin, "world-7-style");
         area7.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "7"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area7.setDisabled(true);
         stage.addActor(area7);
 
         area8 = new Button(skin, "world-8-style");
         area8.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "8"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area8.setDisabled(true);
         stage.addActor(area8);
 
         area9 = new Button(skin, "world-9-style");
         area9.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "9"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area9.setDisabled(true);
         stage.addActor(area9);
 
         area10 = new Button(skin, "world-10-style");
         area10.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, "10"));
+                ScreenManager.getInstance(game).push(new LevelMenuScreen(game, null));
             }
         });
+        area10.setDisabled(true);
         stage.addActor(area10);
     }
 

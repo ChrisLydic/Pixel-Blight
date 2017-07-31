@@ -25,6 +25,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: default-round-down, up: default-round, font: default-font, fontColor: white, disabled: disabled-button },
+	level-0-star: { down: level-button-0-star-down, up: level-button-0-star, font: default-font, fontColor: white, disabled: level-button-disabled },
+	level-1-star: { down: level-button-1-star-down, up: level-button-1-star, font: default-font, fontColor: white },
+	level-2-star: { down: level-button-2-star-down, up: level-button-2-star, font: default-font, fontColor: white },
+	level-3-star: { down: level-button-3-star-down, up: level-button-3-star, font: default-font, fontColor: white },
 	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: default-font, fontColor: white, downFontColor: red }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {

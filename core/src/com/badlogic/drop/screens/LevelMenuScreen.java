@@ -1,22 +1,15 @@
 package com.badlogic.drop.screens;
 
-import com.badlogic.drop.AssetsManager;
-import com.badlogic.drop.Drop;
-import com.badlogic.drop.ScreenManager;
-import com.badlogic.drop.SquareGroup;
+import com.badlogic.drop.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -28,143 +21,15 @@ public class LevelMenuScreen implements Screen {
     OrthographicCamera camera;
     Viewport viewport;
 
+    private LevelGroup world;
     private Stage stage;
     private Table table;
-    private SquareGroup[] levels = new SquareGroup[10];
-    private int[][] level0 = new int[][]{
-            {1,1,1,1},
-            {1,1,1,1},
-            {1,1,1,1},
-            {1,1,1,1}
-    };
-    private int[][] level0Corrupt = new int[][]{
-            {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}
-    };
-    private int[][] level1 = new int[][]{
-            {3,3,3,3,2,2,2,0,0},
-            {0,3,3,3,3,2,2,2,0},
-            {0,0,3,3,3,3,2,2,2},
-            {0,3,3,3,3,2,2,2,0},
-            {3,3,3,3,2,2,2,0,0}
-    };
-    private int[][] level1Corrupt = new int[][]{
-            {0,0}, {1,1}, {2,2}, {3,1}, {4,0}
-    };
-    private int[][] level2 = new int[][]{
-            {0,0,1,1,0,0},
-            {0,1,4,4,1,0},
-            {1,4,4,4,4,1},
-            {1,4,5,5,4,1},
-            {1,4,5,5,4,1},
-            {1,4,4,4,4,1},
-            {0,1,4,4,1,0},
-            {0,0,1,1,0,0}
-    };
-    private int[][] level2Corrupt = new int[][]{
-            {1,1}, {6,4}, {3,2}, {4,3}
-    };
-    private int[][] level3 = new int[][]{
-            {0,0,0,0,6,6,0,0,0,0},
-            {6,0,6,0,6,0,6,0,0,0},
-            {0,6,6,6,0,6,6,6,0,0},
-            {0,0,6,0,6,0,6,0,6,6},
-            {0,0,0,6,6,6,0,6,0,6},
-            {0,0,6,0,6,0,6,6,6,0},
-            {0,0,6,6,0,6,0,6,0,6},
-            {0,0,0,0,6,6,6,0,0,0},
-            {0,0,0,0,0,6,0,0,0,0}
-    };
-    private int[][] level3Corrupt = new int[][]{
-            {1,0}, {6,9}
-    };
-    private int[][] level4 = new int[][]{
-            {7,0,0,0,0,0},
-            {7,0,0,0,0,0},
-            {7,7,7,7,7,7},
-            {7,1,1,1,1,7},
-            {7,1,0,0,1,7},
-            {7,1,0,0,1,7},
-            {7,1,1,1,1,7},
-            {7,7,7,7,7,7},
-            {0,0,0,0,0,7},
-            {0,0,0,0,0,7}
-    };
-    private int[][] level4Corrupt = new int[][]{
-            {0,0}, {9,5}
-    };
-    private int[][] level5 = new int[][]{
-            {0,0,0,1,1,1,0,0,0},
-            {0,1,1,1,1,1,1,1,0},
-            {0,1,1,1,1,1,1,1,0},
-            {1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1},
-            {0,1,1,1,1,1,1,1,0},
-            {0,1,1,1,1,1,1,1,0},
-            {0,0,0,1,1,1,0,0,0}
-    };
-    private int[][] level5Corrupt = new int[][]{
-            {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}
-    };
-    private int[][] level6 = new int[][]{
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1}
-    };
-    private int[][] level6Corrupt = new int[][]{
-            {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}
-    };
-    private int[][] level7 = new int[][]{
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1}
-    };
-    private int[][] level7Corrupt = new int[][]{
-            {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}
-    };
-    private int[][] level8 = new int[][]{
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1}
-    };
-    private int[][] level8Corrupt = new int[][]{
-            {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}
-    };
-    private int[][] level9 = new int[][]{
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1}
-    };
-    private int[][] level9Corrupt = new int[][]{
-            {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}
-    };
+    private Table tableLevels;
 
 
-    public LevelMenuScreen(final Drop game, String world) {
+    public LevelMenuScreen(final Drop game, LevelGroup world) {
         this.game = game;
-
-        levels[0] = new SquareGroup(level0, level0Corrupt);
-        levels[1] = new SquareGroup(level1, level1Corrupt);
-        levels[2] = new SquareGroup(level2, level2Corrupt);
-        levels[3] = new SquareGroup(level3, level3Corrupt);
-        levels[4] = new SquareGroup(level4, level4Corrupt);
-        levels[5] = new SquareGroup(level5, level5Corrupt);
-        levels[6] = new SquareGroup(level6, level6Corrupt);
-        levels[7] = new SquareGroup(level7, level7Corrupt);
-        levels[8] = new SquareGroup(level8, level8Corrupt);
-        levels[9] = new SquareGroup(level9, level9Corrupt);
+        this.world = world;
 
         camera = new OrthographicCamera();
         viewport = new ScreenViewport(camera);
@@ -179,10 +44,10 @@ public class LevelMenuScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        table.setBackground(AssetsManager.getAssetsManager().getDrawable(AssetsManager.BACKGROUND_COLOR));
+//        table.setBackground(AssetsManager.getAssetsManager().getDrawable(AssetsManager.BACKGROUND_COLOR));
 
         Table tableButtons = new Table();
-        Table tableLevels = new Table();
+        tableLevels = new Table();
 
         TextButton button1 = new TextButton("Back", skin);
         button1.addListener(new ChangeListener() {
@@ -202,23 +67,7 @@ public class LevelMenuScreen implements Screen {
 
         ScrollPane scrollPane = new ScrollPane(tableLevels, skin);
 
-        for (int i = 1; i < 11; i++) {
-            TextButton button = new TextButton(Integer.toString(i), skin);
 
-            final SquareGroup level = levels[i-1];
-
-            button.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    ScreenManager.getInstance(game).push(new GameScreen(game, level));
-                }
-            });
-
-            tableLevels.add(button).pad(20);
-            if (i%5 == 0) {
-                tableLevels.row();
-            }
-        }
         tableLevels.pad(50);
 
         tableButtons.add(button1).left();
@@ -231,7 +80,7 @@ public class LevelMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(213/255f, 200/255f, 166/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         camera.update();
@@ -260,7 +109,6 @@ public class LevelMenuScreen implements Screen {
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -271,6 +119,31 @@ public class LevelMenuScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+
+        tableLevels.clearChildren();
+        setTableLevels();
+    }
+
+    private void setTableLevels() {
+        for (final Level level : world.getLevels()) {
+            TextButton button = new TextButton(Integer.toString(level.getNumber()), AssetsManager.getAssetsManager().getUISkin(), "level-" + level.getStars() + "-star");
+
+            if (level.isLocked()) {
+                button.setDisabled(true);
+            }
+
+            button.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    ScreenManager.getInstance(game).push(new GameScreen(game, level));
+                }
+            });
+
+            tableLevels.add(button).pad(20);
+            if ((level.getNumber()) % 5 == 0) {
+                tableLevels.row();
+            }
+        }
     }
 }
 

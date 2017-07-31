@@ -20,6 +20,11 @@ public class SquareGroup {
     private int totalSquares;
     private int infectedSquares;
     private int curedSquares;
+    //number of times user uses tap action successfully
+    private int taps;
+    //number of cells user uncorrupts
+    private int uncorruptCount;
+
     private Array<ParticleEffectPool.PooledEffect> pooledTapEffects;
     private Array<ParticleEffectPool.PooledEffect> pooledCureEffects;
     private Array<Animation> animations;
@@ -35,6 +40,8 @@ public class SquareGroup {
 
     private void setup() {
         count = 0;
+        taps = 0;
+        uncorruptCount = 0;
         infectedSquares = originalCorruptedSquares.length;
         totalSquares = originalBoard.length * originalBoard[0].length;
         squares = new Square[originalBoard.length][originalBoard[0].length];
@@ -255,6 +262,8 @@ public class SquareGroup {
                             pooledTapEffects.add(pooledEffect);
 
                             squares[r][c].unCorrupt(1);
+                            uncorruptCount++;
+                            taps++;
                         }
 
                     } else if (action == ActionManager.ActionType.SCATTER) {
@@ -277,6 +286,7 @@ public class SquareGroup {
                                         isHit = 0;
 
                                         affected.unCorrupt(1);
+                                        uncorruptCount++;
 
                                         animations.add(AssetsManager.getAssetsManager().getAnimation("_", affected.getX() - AssetsManager.SIZE / 2, affected.getY() - AssetsManager.SIZE / 2, AssetsManager.SIZE * 2, AssetsManager.SIZE * 2, 0.07f, false));
                                     } else {
@@ -290,6 +300,7 @@ public class SquareGroup {
                                     isHit = 0;
 
                                     affected.unCorrupt(1);
+                                    uncorruptCount++;
 
                                     animations.add(AssetsManager.getAssetsManager().getAnimation("_", affected.getX() - AssetsManager.SIZE / 2, affected.getY() - AssetsManager.SIZE / 2, AssetsManager.SIZE * 2, AssetsManager.SIZE * 2, 0.07f, false));
                                 } else {
@@ -387,6 +398,7 @@ public class SquareGroup {
 
                         for (Square square : affectedSquares) {
                             square.unCorrupt(1);
+                            uncorruptCount++;
                         }
 
                     } else if (action == ActionManager.ActionType.CURE) {
@@ -397,6 +409,7 @@ public class SquareGroup {
                         pooledCureEffects.add(pooledEffect);
 
                         squares[r][c].cure();
+                        uncorruptCount++;
                     }
                     break;
                 }
@@ -487,5 +500,19 @@ public class SquareGroup {
                 returnedSquares.add(square);
             }
         }
+    }
+
+    public int calculateStars() {
+        int stars = 1;
+        Gdx.app.log("H: ", Integer.toString(taps));
+        Gdx.app.log("S: ", Integer.toString(uncorruptCount));
+
+        if ((float)taps / (float)uncorruptCount > 0.9) {
+            stars = 3;
+        } else if ((float)taps / (float)uncorruptCount > 0.6) {
+            stars = 2;
+        }
+
+        return stars;//TODO: real calculation
     }
 }

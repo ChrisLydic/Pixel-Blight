@@ -29,8 +29,8 @@ public class AssetsManager {
     public static final int EDGE_CURE_ANIMATION = 25;
     public static final String UI_SKIN = "uiskin.json";
     public static final String UI_ATLAS = "uiskin.atlas";
-    public static final String MAIN_BACKGROUND = "background.png";
-    public static final String LOGO = "logo.png";
+    public static final String MAIN_BACKGROUND = "SuDhF3I.png";
+    public static final String LOGO = "logo_border.png";
     public static final String LEVELS_1 = "levels1.png";
     public static final String TAP_EFFECT = "spriteanimation";
     public static final String CURE_EFFECT = "cure_effect";

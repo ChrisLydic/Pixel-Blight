@@ -683,3 +683,75 @@ world-1-disabled
   orig: 66, 78
   offset: 0, 0
   index: -1
+level-button-0-star
+  rotate: false
+  xy: 168, 426
+  size: 68, 86
+  split: 0, 0, 10, 36
+  orig: 68, 86
+  offset: 0, 0
+  index: -1
+level-button-0-star-down
+  rotate: false
+  xy: 168, 339
+  size: 68, 86
+  split: 0, 0, 14, 32
+  orig: 68, 86
+  offset: 0, 0
+  index: -1
+level-button-disabled
+  rotate: false
+  xy: 444, 426
+  size: 68, 86
+  split: 0, 0, 10, 36
+  orig: 68, 86
+  offset: 0, 0
+  index: -1
+level-button-1-star
+  rotate: false
+  xy: 237, 426
+  size: 68, 86
+  split: 0, 0, 10, 36
+  orig: 68, 86
+  offset: 0, 0
+  index: -1
+level-button-1-star-down
+  rotate: false
+  xy: 237, 339
+  size: 68, 86
+  split: 0, 0, 14, 32
+  orig: 68, 86
+  offset: 0, 0
+  index: -1
+level-button-2-star
+  rotate: false
+  xy: 306, 426
+  size: 68, 86
+  split: 0, 0, 10, 36
+  orig: 68, 86
+  offset: 0, 0
+  index: -1
+level-button-2-star-down
+  rotate: false
+  xy: 306, 339
+  size: 68, 86
+  split: 0, 0, 14, 32
+  orig: 68, 86
+  offset: 0, 0
+  index: -1
+level-button-3-star
+  rotate: false
+  xy: 375, 426
+  size: 68, 86
+  split: 0, 0, 10, 36
+  orig: 68, 86
+  offset: 0, 0
+  index: -1
+level-button-3-star-down
+  rotate: false
+  xy: 375, 339
+  size: 68, 86
+  split: 0, 0, 14, 32
+  orig: 68, 86
+  offset: 0, 0
+  index: -1

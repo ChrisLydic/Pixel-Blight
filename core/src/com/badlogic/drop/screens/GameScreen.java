@@ -35,6 +35,8 @@ public class GameScreen implements Screen {
     private float rotationSpeed;
     private Viewport viewport;
 
+    private Level level;
+    // this is already a property of level, this variable is for convenience
     private SquareGroup squareGroup;
 
     private float tick = 0;
@@ -53,8 +55,11 @@ public class GameScreen implements Screen {
     private Label bombLabel;
     private Label cureLabel;
 
-    public GameScreen(final Drop game, final SquareGroup squareGroup) {
+    public GameScreen(final Drop game, final Level level) {
         this.game = game;
+        this.level = level;
+        this.squareGroup = level.getLevelData();
+        squareGroup.reset();
 
         ActionManager.getActionManager().reset();
 
@@ -94,7 +99,7 @@ public class GameScreen implements Screen {
         button1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new PauseScreen(game, squareGroup));
+                ScreenManager.getInstance(game).push(new PauseScreen(game, level));
             }
         });
 
@@ -177,8 +182,6 @@ public class GameScreen implements Screen {
         table.row();
         table.add(tableActions).left().expandY().fillY().padLeft(AssetsManager.getAssetsManager().getPadding());
 
-        this.squareGroup = squareGroup;
-
         isPressed = false;
     }
 
@@ -188,6 +191,7 @@ public class GameScreen implements Screen {
         cam.update();
         game.batch.setProjectionMatrix(cam.combined);
 
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         viewport.apply();
@@ -205,9 +209,9 @@ public class GameScreen implements Screen {
         progressBar.setValue(squareGroup.getProgress());
 
         if (squareGroup.isWon()) {
-            Gdx.app.log("", "WINNER");
+            ScreenManager.getInstance(game).push(new LevelEndScreen(game, level, true));
         } else if (squareGroup.isLost()) {
-            Gdx.app.log("", "LOSER");
+            ScreenManager.getInstance(game).push(new LevelEndScreen(game, level, false));
         } else {
             if (Gdx.input.isTouched()) {
                 if (!isPressed) {

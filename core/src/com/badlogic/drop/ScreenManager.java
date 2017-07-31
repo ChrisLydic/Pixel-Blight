@@ -1,6 +1,7 @@
 package com.badlogic.drop;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 
@@ -10,11 +11,11 @@ import java.util.ArrayList;
 public class ScreenManager {
     private static ScreenManager screenManager;
     private final Drop game;
-    private ArrayList<Screen> screenStack;
+    private Array<Screen> screenStack;
 
     private ScreenManager(final Drop game) {
         this.game = game;
-        this.screenStack = new ArrayList<Screen>();
+        this.screenStack = new Array<Screen>(true, 10);
     }
 
     public static ScreenManager getInstance(final Drop game) {
@@ -30,17 +31,31 @@ public class ScreenManager {
     }
 
     public void pop() {
-        Screen screen = screenStack.remove(screenStack.size() - 1);
+        privatePop();
 
-        screen.hide();
-        screen.dispose();
-
-        game.setScreen(screenStack.get(screenStack.size() - 1));
+        game.setScreen(screenStack.peek());
     }
 
     public void pop(int times) {
         for (int i = 0; i < times; i++) {
-            this.pop();
+            privatePop();
         }
+
+        game.setScreen(screenStack.peek());
+    }
+
+    public void popPush(int times, Screen screen) {
+        for (int i = 0; i < times; i++) {
+            privatePop();
+        }
+
+        push(screen);
+    }
+
+    private void privatePop() {
+        Screen screen = screenStack.pop();
+
+        screen.hide();
+        screen.dispose();
     }
 }
