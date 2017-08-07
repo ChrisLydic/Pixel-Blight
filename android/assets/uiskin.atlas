@@ -755,3 +755,95 @@ level-button-3-star-down
   orig: 68, 86
   offset: 0, 0
   index: -1
+victory-cells
+  rotate: false
+  xy: 509, 1
+  size: 438, 330
+  orig: 438, 330
+  offset: 0, 0
+  index: -1
+defeat
+  rotate: false
+  xy: 509, 331
+  size: 146, 55
+  orig: 146, 55
+  offset: 0, 0
+  index: -1
+default-round-image
+  rotate: false
+  xy: 91, 1
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 10, 10, 10, 20
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+default-round-down-image
+  rotate: false
+  xy: 128, 1
+  size: 36, 36
+  split: 9, 9, 9, 12
+  pad: 10, 10, 14, 14
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+disabled-button-image
+  rotate: false
+  xy: 165, 1
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 10, 10, 10, 18
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+settings-glyph
+  rotate: false
+  xy: 202, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+restart-glyph
+  rotate: false
+  xy: 235, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+next-glyph
+  rotate: false
+  xy: 268, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+play-glyph
+  rotate: false
+  xy: 268, 34
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+back-glyph
+  rotate: false
+  xy: 268, 67
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+pause-glyph
+  rotate: false
+  xy: 301, 79
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+container
+  rotate: false
+  xy: 1, 224
+  size: 60, 66
+  split: 15, 15, 15, 24
+  pad: 20, 20, 20, 28
+  orig: 36, 36
+  offset: 0, 0
+  index: -1

@@ -31,6 +31,14 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	level-3-star: { down: level-button-3-star-down, up: level-button-3-star, font: default-font, fontColor: white },
 	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: default-font, fontColor: white, downFontColor: red }
 },
+com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+	settings: { down: default-round-down-image, up: default-round-image, disabled: disabled-button-image, imageUp: settings-glyph },
+	restart: { down: default-round-down-image, up: default-round-image, disabled: disabled-button-image, imageUp: restart-glyph },
+	next: { down: default-round-down-image, up: default-round-image, disabled: disabled-button-image, imageUp: next-glyph },
+	play: { down: default-round-down-image, up: default-round-image, disabled: disabled-button-image, imageUp: play-glyph },
+	back: { down: default-round-down-image, up: default-round-image, disabled: disabled-button-image, imageUp: back-glyph },
+	pause: { down: default-round-down-image, up: default-round-image, disabled: disabled-button-image, imageUp: pause-glyph }
+},
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { hScrollKnob: default-round-large, vScrollKnob: default-round-large }
 },

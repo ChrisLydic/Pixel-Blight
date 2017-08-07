@@ -37,6 +37,11 @@ public class AssetsManager {
     public static final String BACKGROUND_COLOR = "background-color";
     public static final String WORLD_MAP = "world-map";
 
+    public static final String VICTORY_1 = "victory-1-stars";
+    public static final String VICTORY_2 = "victory-2-stars";
+    public static final String VICTORY_3 = "victory-3-stars";
+    public static final String DEFEAT = "defeat";
+
     public static final String TAP_BASE = "tap-";
     public static final String TAP_LEVEL_1 = "tap-1";
     public static final String TAP_LEVEL_2 = "tap-2";
@@ -109,6 +114,7 @@ public class AssetsManager {
     private ParticleEffectPool tapEffectPool;
     private ParticleEffectPool cureEffectPool;
     private TextureRegion[][] tiles;
+    private TextureRegion[] victoryCells;
 
     private AssetsManager() {}
 
@@ -143,6 +149,17 @@ public class AssetsManager {
                 assetManager.get("tiles2.png", Texture.class)
             ).split(32, 32);
 
+        victoryCells = new TextureRegion[18];
+        TextureRegion[][] tempVictoryCells = assetManager.get(UI_SKIN, Skin.class).get("victory-cells", TextureRegion.class).split( 146, 55);
+
+        int count = 0;
+        for (TextureRegion[] textureRegions : tempVictoryCells) {
+            for (TextureRegion textureRegion : textureRegions) {
+                victoryCells[count] = textureRegion;
+                count++;
+            }
+        }
+
         assetManager.get(UI_SKIN, Skin.class).getFont("default-font").getData().setScale(1.5f);
     }
 
@@ -153,6 +170,38 @@ public class AssetsManager {
     public Animation getTileAnimation(int row, int col, float x, float y, float duration, boolean loop) {
         TextureRegion[] frames = new TextureRegion[]{ tiles[row][col], tiles[row][++col], tiles[row][++col], tiles[row][++col]};
         return new Animation(duration, frames, x, y, SIZE, SIZE, loop);
+    }
+
+    public AnimatedImage getVictoryAnimation(int stars, float x, float y, float duration) {
+        TextureRegion[] frames;
+        if (stars == 1) {
+            frames = new TextureRegion[]{
+                victoryCells[0], victoryCells[1], victoryCells[2],
+                victoryCells[3], victoryCells[4], victoryCells[5],
+                victoryCells[6], victoryCells[7]
+            };
+        } else if (stars == 2) {
+            frames = new TextureRegion[]{
+                victoryCells[0], victoryCells[1], victoryCells[2],
+                victoryCells[3], victoryCells[4], victoryCells[5],
+                victoryCells[6], victoryCells[7], victoryCells[8],
+                victoryCells[9], victoryCells[10], victoryCells[11],
+                victoryCells[12]
+            };
+        } else if (stars == 3){
+            frames = new TextureRegion[]{
+                victoryCells[0], victoryCells[1], victoryCells[2],
+                victoryCells[3], victoryCells[4], victoryCells[5],
+                victoryCells[6], victoryCells[7], victoryCells[8],
+                victoryCells[9], victoryCells[10], victoryCells[11],
+                victoryCells[12], victoryCells[13], victoryCells[14],
+                victoryCells[15], victoryCells[16], victoryCells[17]
+            };
+        } else {
+            frames = new TextureRegion[]{ assetManager.get(UI_SKIN, Skin.class).get(AssetsManager.DEFEAT, TextureRegion.class) };
+        }
+
+        return new AnimatedImage(new Animation(duration, frames, x, y, SIZE, SIZE, false));
     }
 
     public Animation getAnimation(String name, float x, float y, float width, float height, float duration, boolean loop) {

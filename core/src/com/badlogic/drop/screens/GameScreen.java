@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -61,8 +62,6 @@ public class GameScreen implements Screen {
         this.squareGroup = level.getLevelData();
         squareGroup.reset();
 
-        ActionManager.getActionManager().reset();
-
         rotationSpeed = 0.7f;
 
         //float w = Gdx.graphics.getWidth();
@@ -95,16 +94,16 @@ public class GameScreen implements Screen {
 
         Skin skin = AssetsManager.getAssetsManager().getUISkin();
 
-        TextButton button1 = new TextButton("Pause", skin);
-        button1.addListener(new ChangeListener() {
+        ImageButton buttonPause = new ImageButton(skin, "pause");
+        buttonPause.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).push(new PauseScreen(game, level));
             }
         });
 
-        TextButton button2 = new TextButton("Store", skin);
-        button2.addListener(new ChangeListener() {
+        TextButton buttonStore = new TextButton("Store", skin);
+        buttonStore.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).push(new ShopScreen(game));
@@ -114,8 +113,8 @@ public class GameScreen implements Screen {
         progressBar = new ProgressBar(0, 1, 0.01f, false, skin);
         progressBar.setValue(1);
 
-        tableButtons.add(button1).padRight(AssetsManager.getAssetsManager().getPadding()).left();
-        tableButtons.add(button2).padRight(AssetsManager.getAssetsManager().getPadding()).left().expand();
+        tableButtons.add(buttonPause).padRight(AssetsManager.getAssetsManager().getPadding()).left();
+        tableButtons.add(buttonStore).padRight(AssetsManager.getAssetsManager().getPadding()).left().expand();
         tableButtons.add(progressBar).right();
 
         Table tableTouchAction = new Table();

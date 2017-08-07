@@ -9,11 +9,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -27,7 +30,11 @@ public class LevelEndScreen implements Screen {
 
     private Stage stage;
     private Table table;
+    private Table tableImage;
+    private Table tableButtons;
     private Texture background;
+    private AnimatedImage victoryMessage;
+    private boolean isOriginSet;
 
     public LevelEndScreen(final Drop game, final Level level, boolean isWon) {
         this.game = game;
@@ -41,11 +48,19 @@ public class LevelEndScreen implements Screen {
 
         background = AssetsManager.getAssetsManager().getTexture(AssetsManager.MAIN_BACKGROUND);
 
+        int stars = 0;
+        if (isWon) {
+            stars = level.getLevelData().calculateStars();
+        }
+
         Skin skin = AssetsManager.getAssetsManager().getUISkin();
 
         table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
+
+        tableImage = new Table();
+        tableButtons = new Table();
 
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
         style.up = new NinePatchDrawable(skin.getPatch("default-round-large"));
@@ -53,16 +68,16 @@ public class LevelEndScreen implements Screen {
         style.down = new NinePatchDrawable(skin.getPatch("default-scroll"));
         style.font = skin.getFont("default-font");
 
-        TextButton button1 = new TextButton("Quit", skin);
-        button1.addListener(new ChangeListener() {
+        ImageButton buttonBack = new ImageButton(skin, "back");
+        buttonBack.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).pop(2);
             }
         });
 
-        TextButton button2 = new TextButton("Replay", skin);
-        button2.addListener(new ChangeListener() {
+        ImageButton buttonRestart = new ImageButton(skin, "restart");
+        buttonRestart.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 level.getLevelData().reset();
@@ -70,8 +85,8 @@ public class LevelEndScreen implements Screen {
             }
         });
 
-        table.add(button1).pad(20);
-        table.add(button2).pad(20);
+        tableButtons.add(buttonBack).pad(20);
+        tableButtons.add(buttonRestart).pad(20);
 
         if (isWon) {
             if (level.getNextLevel() == null) {
@@ -80,21 +95,19 @@ public class LevelEndScreen implements Screen {
                 if (level.getWorld().getNextGroup() != null) {
                     level.getWorld().getNextGroup().unlock();
 
-                    TextButton button3 = new TextButton("Next", skin);
-                    button3.addListener(new ChangeListener() {
+                    ImageButton buttonNext = new ImageButton(skin, "next");
+                    buttonNext.addListener(new ChangeListener() {
                         @Override
                         public void changed(ChangeEvent event, Actor actor) {
                             ScreenManager.getInstance(game).popPush(3, new LevelMenuScreen(game, level.getWorld().getNextGroup()));
                         }
                     });
 
-                    table.add(button3).pad(20);
+                    tableButtons.add(buttonNext).pad(20);
                 } else {
                     //TODO endgame screen
                 }
             }
-
-            int stars = level.getLevelData().calculateStars();
 
             if (level.getStars() < stars) {
                 level.setStars(stars);
@@ -107,16 +120,38 @@ public class LevelEndScreen implements Screen {
                 level.getNextLevel().unlock();
             }
 
-            TextButton button3 = new TextButton("Next", skin);
-            button3.addListener(new ChangeListener() {
+            ImageButton buttonNext = new ImageButton(skin, "next");
+            buttonNext.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     ScreenManager.getInstance(game).popPush(2, new GameScreen(game, level.getNextLevel()));
                 }
             });
 
-            table.add(button3).pad(20);
+            tableButtons.add(buttonNext).pad(20);
         }
+
+        SequenceAction infiniteSequence = new SequenceAction();
+        infiniteSequence.addAction(Actions.scaleBy(0.1f, 0.1f, 0.8f));
+        infiniteSequence.addAction(Actions.scaleBy(-0.1f, -0.1f, 0.8f));
+
+        RepeatAction infiniteLoop = new RepeatAction();
+        infiniteLoop.setCount(RepeatAction.FOREVER);
+        infiniteLoop.setAction(infiniteSequence);
+
+        victoryMessage = AssetsManager.getAssetsManager().getVictoryAnimation(stars, 0, 0, 0.1f);
+        victoryMessage.setScaling(Scaling.fit);
+        victoryMessage.addAction(infiniteLoop);
+        tableImage.add(victoryMessage).expand().fill().center();
+        isOriginSet = false;
+
+        table.padTop(50);
+        table.add(tableImage).expand().fill();
+        table.row();
+        table.add(tableButtons).padTop(50).expand().top();
+
+        stage.addAction(Actions.fadeOut(0f));
+        stage.addAction(Actions.fadeIn(0.4f));
     }
 
     @Override
@@ -126,6 +161,8 @@ public class LevelEndScreen implements Screen {
 
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
+
+        victoryMessage.setOrigin(victoryMessage.getWidth() / 2, victoryMessage.getHeight() / 2);
 
         float x = viewport.unproject(new Vector3(viewport.getScreenWidth(), viewport.getScreenHeight(), 0)).x;
         float y = viewport.unproject(new Vector3(viewport.getScreenX(), viewport.getScreenY(), 0)).y;

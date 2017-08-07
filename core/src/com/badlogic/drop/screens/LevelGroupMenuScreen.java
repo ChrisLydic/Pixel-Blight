@@ -3,20 +3,14 @@ package com.badlogic.drop.screens;
 import com.badlogic.drop.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -31,7 +25,7 @@ public class LevelGroupMenuScreen implements Screen {
     private Sprite world;
     private Stage stage;
     private Table table;
-    private TextButton button1;
+    private ImageButton buttonBack;
     private Button area1;
     private Button area2;
     private Button area3;
@@ -67,25 +61,25 @@ public class LevelGroupMenuScreen implements Screen {
 
         Skin skin = AssetsManager.getAssetsManager().getUISkin();
 
-        button1 = new TextButton("Back", skin);
-        button1.addListener(new ChangeListener() {
+        buttonBack = new ImageButton(skin, "back");
+        buttonBack.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).pop();
             }
         });
-        TextButton button2 = new TextButton("IAP", skin);
-        TextButton button3 = new TextButton("Settings", skin);
-        button3.addListener(new ChangeListener() {
+        TextButton buttonIAP = new TextButton("IAP", skin);
+        ImageButton buttonSettings = new ImageButton(skin, "settings");
+        buttonSettings.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).push(new SettingsScreen(game));
             }
         });
 
-        table.add(button1).pad(AssetsManager.getAssetsManager().getPadding()).left().top();
-        table.add(button2).padTop(AssetsManager.getAssetsManager().getPadding()).center().expandX().top();
-        table.add(button3).pad(AssetsManager.getAssetsManager().getPadding()).right().top();
+        table.add(buttonBack).pad(AssetsManager.getAssetsManager().getPadding()).left().top();
+        table.add(buttonIAP).padTop(AssetsManager.getAssetsManager().getPadding()).center().expandX().top();
+        table.add(buttonSettings).pad(AssetsManager.getAssetsManager().getPadding()).right().top();
         table.top();
 
         area1 = new Button(skin, "world-1-style");
@@ -201,7 +195,7 @@ public class LevelGroupMenuScreen implements Screen {
             x = viewport.unproject(new Vector3(viewport.getScreenWidth(), viewport.getScreenHeight(), 0)).x;
             y = viewport.unproject(new Vector3(viewport.getScreenX(), viewport.getScreenY(), 0)).y;
 
-            height =  y - (button1.getHeight() + (y * 0.1f) + AssetsManager.getAssetsManager().getPadding() * 2);
+            height =  y - (buttonBack.getHeight() + (y * 0.1f) + AssetsManager.getAssetsManager().getPadding() * 2);
             width = height * 1.7115384615384615f;
 
             x = x / 2 - (width / 2);

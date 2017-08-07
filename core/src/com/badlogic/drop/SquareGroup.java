@@ -483,6 +483,7 @@ public class SquareGroup {
     }
 
     public void reset() {
+        ActionManager.getActionManager().reset();
         setup();
     }
 

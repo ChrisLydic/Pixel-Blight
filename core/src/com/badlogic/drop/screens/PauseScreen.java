@@ -9,10 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Scaling;
@@ -55,24 +52,24 @@ public class PauseScreen implements Screen {
         style.down = new NinePatchDrawable(skin.getPatch("default-scroll"));
         style.font = skin.getFont("default-font");
 
-        TextButton button1 = new TextButton("Quit", skin);
-        button1.addListener(new ChangeListener() {
+        ImageButton buttonBack = new ImageButton(skin, "back");
+        buttonBack.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).pop(2);
             }
         });
 
-        TextButton button2 = new TextButton("Return", skin);
-        button2.addListener(new ChangeListener() {
+        ImageButton buttonContinue = new ImageButton(skin, "play");
+        buttonContinue.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).pop();
             }
         });
 
-        TextButton button3 = new TextButton("Replay", skin);
-        button3.addListener(new ChangeListener() {
+        ImageButton buttonRestart = new ImageButton(skin, "restart");
+        buttonRestart.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 level.getLevelData().reset();
@@ -80,18 +77,18 @@ public class PauseScreen implements Screen {
             }
         });
 
-        TextButton button4 = new TextButton("Settings", skin);
-        button4.addListener(new ChangeListener() {
+        ImageButton buttonSettings = new ImageButton(skin, "settings");
+        buttonSettings.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).push(new SettingsScreen(game));
             }
         });
 
-        table.add(button1).pad(20);
-        table.add(button2).pad(20);
-        table.add(button3).pad(20);
-        table.add(button4).pad(20);
+        table.add(buttonBack).pad(20);
+        table.add(buttonContinue).pad(20);
+        table.add(buttonRestart).pad(20);
+        table.add(buttonSettings).pad(20);
     }
 
     @Override

@@ -15,6 +15,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -32,7 +35,7 @@ public class MainMenuScreen implements Screen {
 
     private Stage stage;
     private Table table;
-    private Texture logo;
+    private Image logoImage;
     private Texture background;
     private float x;
     private float y;
@@ -58,8 +61,8 @@ public class MainMenuScreen implements Screen {
         Table table1 = new Table();
         Table table2 = new Table();
 
-        logo = AssetsManager.getAssetsManager().getTexture(AssetsManager.LOGO);
-        Image logoImage = new Image(logo);
+        Texture logo = AssetsManager.getAssetsManager().getTexture(AssetsManager.LOGO);
+        logoImage = new Image(logo);
         logoImage.setScaling(Scaling.fit);
 
         TextButton buttonPlay = new TextButton("Play", skin);
@@ -69,24 +72,35 @@ public class MainMenuScreen implements Screen {
                 ScreenManager.getInstance(game).push(new LevelGroupMenuScreen(game));
             }
         });
-        TextButton buttonSettings = new TextButton("Settings", skin);
+        ImageButton buttonSettings = new ImageButton(skin, "settings");
         buttonSettings.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).push(new SettingsScreen(game));
             }
         });
+        TextButton buttonCredits = new TextButton("Credits", skin);
+        buttonCredits.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance(game).push(new LevelGroupMenuScreen(game));
+            }
+        });
 
         table1.add(logoImage).expand().fill();
 
-        table2.add(buttonPlay).center();
-        table2.row();
-        table2.add(buttonSettings).center();
+        table2.setFillParent(true);
 
-        table.pad(50);
-        table.add(table1).expand().fill();
+        table2.add(buttonPlay).center().top();
+        table2.row();
+        table2.add(buttonSettings).bottom().left();
+
+        table.add(table1).pad(50, 50, 0, 50).expand().fill().colspan(2);
         table.row();
-        table.add(table2).expand().top();
+        table.add(buttonPlay).padBottom(50).center().colspan(2);
+        table.row().pad(10);
+        table.add(buttonSettings).bottom().left();
+        table.add(buttonCredits).bottom().right();
     }
 
     @Override

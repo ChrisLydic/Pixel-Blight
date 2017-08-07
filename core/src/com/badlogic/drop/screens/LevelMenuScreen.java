@@ -49,16 +49,16 @@ public class LevelMenuScreen implements Screen {
         Table tableButtons = new Table();
         tableLevels = new Table();
 
-        TextButton button1 = new TextButton("Back", skin);
-        button1.addListener(new ChangeListener() {
+        ImageButton buttonBack = new ImageButton(skin, "back");
+        buttonBack.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).pop();
             }
         });
-        TextButton button2 = new TextButton("IAP", skin);
-        TextButton button3 = new TextButton("Settings", skin);
-        button3.addListener(new ChangeListener() {
+        TextButton buttonIAP = new TextButton("IAP", skin);
+        ImageButton buttonSettings = new ImageButton(skin, "settings");
+        buttonSettings.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance(game).push(new SettingsScreen(game));
@@ -70,9 +70,9 @@ public class LevelMenuScreen implements Screen {
 
         tableLevels.pad(50);
 
-        tableButtons.add(button1).left();
-        tableButtons.add(button2).center().expand();
-        tableButtons.add(button3).right();
+        tableButtons.add(buttonBack).left();
+        tableButtons.add(buttonIAP).center().expand();
+        tableButtons.add(buttonSettings).right();
         table.add(tableButtons).pad(AssetsManager.getAssetsManager().getPadding()).expandX().fill();
         table.row().expand().fill();
         table.add(scrollPane);
