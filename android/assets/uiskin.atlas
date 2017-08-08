@@ -403,258 +403,6 @@ cure-3-down
   orig: 32, 32
   offset: 0, 0
   index: -1
-tap-1-upgrade
-  rotate: false
-  xy: 0, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-tap-1-upgrade-active
-  rotate: false
-  xy: 0, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-tap-1-upgrade-disabled
-  rotate: false
-  xy: 0, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-tap-2-upgrade
-  rotate: false
-  xy: 48, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-tap-2-upgrade-active
-  rotate: false
-  xy: 48, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-tap-2-upgrade-disabled
-  rotate: false
-  xy: 48, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-tap-3-upgrade
-  rotate: false
-  xy: 96, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-tap-3-upgrade-active
-  rotate: false
-  xy: 96, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-tap-3-upgrade-disabled
-  rotate: false
-  xy: 96, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-1-upgrade
-  rotate: false
-  xy: 144, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-1-upgrade-active
-  rotate: false
-  xy: 144, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-1-upgrade-disabled
-  rotate: false
-  xy: 144, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-2-upgrade
-  rotate: false
-  xy: 192, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-2-upgrade-active
-  rotate: false
-  xy: 192, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-2-upgrade-disabled
-  rotate: false
-  xy: 192, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-3-upgrade
-  rotate: false
-  xy: 240, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-3-upgrade-active
-  rotate: false
-  xy: 240, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-scatter-3-upgrade-disabled
-  rotate: false
-  xy: 240, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-1-upgrade
-  rotate: false
-  xy: 288, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-1-upgrade-active
-  rotate: false
-  xy: 288, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-1-upgrade-disabled
-  rotate: false
-  xy: 288, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-2-upgrade
-  rotate: false
-  xy: 336, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-2-upgrade-active
-  rotate: false
-  xy: 336, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-2-upgrade-disabled
-  rotate: false
-  xy: 336, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-3-upgrade
-  rotate: false
-  xy: 384, 272
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-3-upgrade-active
-  rotate: false
-  xy: 384, 224
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-bomb-3-upgrade-disabled
-  rotate: false
-  xy: 384, 320
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-1-upgrade
-  rotate: false
-  xy: 0, 416
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-1-upgrade-active
-  rotate: false
-  xy: 0, 368
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-1-upgrade-disabled
-  rotate: false
-  xy: 0, 464
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-2-upgrade
-  rotate: false
-  xy: 48, 416
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-2-upgrade-active
-  rotate: false
-  xy: 48, 368
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-2-upgrade-disabled
-  rotate: false
-  xy: 48, 464
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-3-upgrade
-  rotate: false
-  xy: 96, 416
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-3-upgrade-active
-  rotate: false
-  xy: 96, 368
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
-cure-3-upgrade-disabled
-  rotate: false
-  xy: 96, 464
-  size: 48, 48
-  orig: 48, 48
-  offset: 0, 0
-  index: -1
 world-map
   rotate: false
   xy: 384, 108
@@ -842,8 +590,61 @@ container
   rotate: false
   xy: 1, 224
   size: 60, 66
-  split: 15, 15, 15, 24
-  pad: 20, 20, 20, 28
+  split: 12, 12, 12, 21
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+shop-button-price
+  rotate: false
+  xy: 62, 224
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 16, 18, 6, 18
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+shop-button-price-down
+  rotate: false
+  xy: 136, 224
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 16, 18, 6, 18
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+shop-button-price-disabled
+  rotate: false
+  xy: 210, 224
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 16, 18, 6, 18
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+shop-button
+  rotate: false
+  xy: 99, 224
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 16, 18, 6, 18
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+shop-button-down
+  rotate: false
+  xy: 173, 224
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 16, 18, 6, 18
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+shop-button-disabled
+  rotate: false
+  xy: 247, 224
+  size: 36, 36
+  split: 9, 9, 6, 18
+  pad: 16, 18, 6, 18
   orig: 36, 36
   offset: 0, 0
   index: -1

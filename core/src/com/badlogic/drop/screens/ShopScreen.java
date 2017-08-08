@@ -8,11 +8,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -32,13 +30,12 @@ public class ShopScreen implements Screen {
     private Table tableScatterAction;
     private Table tableBombAction;
     private Table tableCureAction;
-    private Table tableCurrentAction;
     private ActionManager actionManager;
 
-    private Image tapButton;
-    private Image scatterButton;
-    private Image bombButton;
-    private Image cureButton;
+    private Image tapImage;
+    private Image scatterImage;
+    private Image bombImage;
+    private Image cureImage;
 
     private Texture background;
 
@@ -68,6 +65,11 @@ public class ShopScreen implements Screen {
         tableBombAction = new Table();
         tableCureAction = new Table();
 
+        Table tableTapText = new Table();
+        Table tableScatterText = new Table();
+        Table tableBombText = new Table();
+        Table tableCureText = new Table();
+
         tableTapAction.setBackground(AssetsManager.getAssetsManager().getDrawable("container"));
         tableScatterAction.setBackground(AssetsManager.getAssetsManager().getDrawable("container"));
         tableBombAction.setBackground(AssetsManager.getAssetsManager().getDrawable("container"));
@@ -92,67 +94,83 @@ public class ShopScreen implements Screen {
         ScrollPane scrollPane = new ScrollPane(tableActions, skin);
 
         // Tap
-        tapButton = new Image(AssetsManager.getAssetsManager().getDrawable("tap-" + actionManager.getTapLevel()));
-        tapButton.setScaling(Scaling.fit);
+        tapImage = new Image(AssetsManager.getAssetsManager().getDrawable("tap-" + actionManager.getTapLevel()));
+        tapImage.setScaling(Scaling.fit);
 
         // scatter
-        scatterButton = new Image(AssetsManager.getAssetsManager().getDrawable("scatter-" + actionManager.getScatterLevel()));
-        scatterButton.setScaling(Scaling.fit);
+        scatterImage = new Image(AssetsManager.getAssetsManager().getDrawable("scatter-" + actionManager.getScatterLevel()));
+        scatterImage.setScaling(Scaling.fit);
 
         // bomb
-        bombButton = new Image(AssetsManager.getAssetsManager().getDrawable("bomb-" + actionManager.getBombLevel()));
-        bombButton.setScaling(Scaling.fit);
+        bombImage = new Image(AssetsManager.getAssetsManager().getDrawable("bomb-" + actionManager.getBombLevel()));
+        bombImage.setScaling(Scaling.fit);
 
         // cure
-        cureButton = new Image(AssetsManager.getAssetsManager().getDrawable("cure-" + actionManager.getCureLevel()));
-        cureButton.setScaling(Scaling.fit);
+        cureImage = new Image(AssetsManager.getAssetsManager().getDrawable("cure-" + actionManager.getCureLevel()));
+        cureImage.setScaling(Scaling.fit);
 
 
         Label tapLabel = new Label("Tap", skin);
         Label tapDescription = new Label("Tap description", skin);
         tapDescription.setAlignment(Align.topLeft);
-        TextButton tapButtonUpgrade = new TextButton("Upgrade\n$" + ActionManager.TAP_UPGRADE_1_COST, skin);
+        TextButton tapButtonUpgradePrice = new TextButton(Integer.toString(ActionManager.TAP_UPGRADE_1_COST), skin, "shop-button-price");
+        TextButton tapButtonUpgrade = new TextButton("Upgrade", skin, "shop-button");
         if (actionManager.getTapLevel() == ActionManager.MID_TAP_LEVEL) {
             tapButtonUpgrade.setText("Upgrade\n$" + ActionManager.TAP_UPGRADE_2_COST);
         } else if (actionManager.getTapLevel() == ActionManager.MAX_TAP_LEVEL) {
             tapButtonUpgrade.setDisabled(true);
             tapButtonUpgrade.setText("Final\n$-");
         }
+        tapButtonUpgrade.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                actionManager.incrementTapLevel();
+                tapImage.setDrawable(AssetsManager.getAssetsManager().getDrawable("tap-" + actionManager.getTapLevel()));
 
+                if (actionManager.getTapLevel() == ActionManager.MID_TAP_LEVEL) {
+                    //((TextButton) actor).setText(ActionManager.SCATTER_UPGRADE_2_COST);
+                } else if (actionManager.getTapLevel() == ActionManager.MAX_TAP_LEVEL) {
+                    ((TextButton) actor).setDisabled(true);
+                    ((TextButton) actor).setText("Final");
+                }
+            }
+        });
 
         Label scatterLabel = new Label("Scatter", skin);
         Label scatterDescription = new Label("Scatter description", skin);
         scatterDescription.setAlignment(Align.topLeft);
-        TextButton scatterButtonBuy = new TextButton("Buy (" + actionManager.getScatterCount() + ")\n$" + ActionManager.SCATTER_ITEM_COST, skin);
+        TextButton scatterButtonBuyPrice = new TextButton(Integer.toString(ActionManager.SCATTER_ITEM_COST), skin, "shop-button-price");
+        TextButton scatterButtonBuy = new TextButton("Buy", skin, "shop-button");
         scatterButtonBuy.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 actionManager.setScatterCount(actionManager.getScatterCount() + 1);
-                ((TextButton) actor).setText("Buy (" + actionManager.getScatterCount() + ")\n$" + ActionManager.SCATTER_ITEM_COST);
+                //((TextButton) actor).setText(ActionManager.SCATTER_ITEM_COST);
 
                 if (actionManager.getScatterCount() == ActionManager.MAX_SCATTER_COUNT) {
                     ((TextButton) actor).setDisabled(true);
                 }
             }
         });
-        TextButton scatterButtonUpgrade = new TextButton("Upgrade\n$" + ActionManager.SCATTER_UPGRADE_1_COST, skin);
+        TextButton scatterButtonUpgradePrice = new TextButton(Integer.toString(ActionManager.SCATTER_UPGRADE_1_COST), skin, "shop-button-price");
+        TextButton scatterButtonUpgrade = new TextButton("Upgrade", skin, "shop-button");
         if (actionManager.getScatterLevel() == ActionManager.MID_SCATTER_LEVEL) {
-            scatterButtonUpgrade.setText("Upgrade\n$" + ActionManager.SCATTER_UPGRADE_2_COST);
+            //scatterButtonUpgrade.setText("Upgrade" + ActionManager.SCATTER_UPGRADE_2_COST);
         } else if (actionManager.getScatterLevel() == ActionManager.MAX_SCATTER_LEVEL) {
             scatterButtonUpgrade.setDisabled(true);
-            scatterButtonUpgrade.setText("Final\n$-");
+            scatterButtonUpgrade.setText("Final");
         }
         scatterButtonUpgrade.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 actionManager.incrementScatterLevel();
-                scatterButton.setDrawable(AssetsManager.getAssetsManager().getDrawable("scatter-" + actionManager.getScatterLevel()));
+                scatterImage.setDrawable(AssetsManager.getAssetsManager().getDrawable("scatter-" + actionManager.getScatterLevel()));
 
                 if (actionManager.getScatterLevel() == ActionManager.MID_SCATTER_LEVEL) {
-                    ((TextButton) actor).setText("Upgrade\n$" + ActionManager.SCATTER_UPGRADE_2_COST);
+                    //((TextButton) actor).setText(ActionManager.SCATTER_UPGRADE_2_COST);
                 } else if (actionManager.getScatterLevel() == ActionManager.MAX_SCATTER_LEVEL) {
                     ((TextButton) actor).setDisabled(true);
-                    ((TextButton) actor).setText("Final\n$-");
+                    ((TextButton) actor).setText("Final");
                 }
             }
         });
@@ -160,36 +178,38 @@ public class ShopScreen implements Screen {
         Label bombLabel = new Label("Bomb", skin);
         Label bombDescription = new Label("Bomb description", skin);
         bombDescription.setAlignment(Align.topLeft);
-        TextButton bombButtonBuy = new TextButton("Buy (" + actionManager.getBombCount() + ")\n$" + ActionManager.BOMB_ITEM_COST, skin);
+        TextButton bombButtonBuyPrice = new TextButton(Integer.toString(ActionManager.BOMB_ITEM_COST), skin, "shop-button-price");
+        TextButton bombButtonBuy = new TextButton("Buy", skin, "shop-button");
         bombButtonBuy.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 actionManager.setBombCount(actionManager.getBombCount() + 1);
-                ((TextButton) actor).setText("Buy (" + actionManager.getBombCount() + ")\n$" + ActionManager.BOMB_ITEM_COST);
+                //((TextButton) actor).setText(ActionManager.BOMB_ITEM_COST);
 
                 if (actionManager.getBombCount() == ActionManager.MAX_BOMB_COUNT) {
                     ((TextButton) actor).setDisabled(true);
                 }
             }
         });
-        TextButton bombButtonUpgrade = new TextButton("Upgrade\n$" + ActionManager.BOMB_UPGRADE_1_COST, skin);
+        TextButton bombButtonUpgradePrice = new TextButton(Integer.toString(ActionManager.BOMB_UPGRADE_1_COST), skin, "shop-button-price");
+        TextButton bombButtonUpgrade = new TextButton("Upgrade", skin, "shop-button");
         if (actionManager.getBombLevel() == ActionManager.MID_BOMB_LEVEL) {
-            bombButtonUpgrade.setText("Upgrade\n$" + ActionManager.BOMB_UPGRADE_2_COST);
+            //bombButtonUpgrade.setText("Upgrade");
         } else if (actionManager.getBombLevel() == ActionManager.MAX_BOMB_LEVEL) {
             bombButtonUpgrade.setDisabled(true);
-            bombButtonUpgrade.setText("Final\n$-");
+            bombButtonUpgrade.setText("Final");
         }
         bombButtonUpgrade.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 actionManager.incrementBombLevel();
-                bombButton.setDrawable(AssetsManager.getAssetsManager().getDrawable("bomb-" + actionManager.getBombLevel()));
+                bombImage.setDrawable(AssetsManager.getAssetsManager().getDrawable("bomb-" + actionManager.getBombLevel()));
 
                 if (actionManager.getBombLevel() == ActionManager.MID_BOMB_LEVEL) {
-                    ((TextButton) actor).setText("Upgrade\n$" + ActionManager.BOMB_UPGRADE_2_COST);
+                    //((TextButton) actor).setText(ActionManager.BOMB_UPGRADE_2_COST);
                 } else if (actionManager.getBombLevel() == ActionManager.MAX_BOMB_LEVEL) {
                     ((TextButton) actor).setDisabled(true);
-                    ((TextButton) actor).setText("Final\n$-");
+                    ((TextButton) actor).setText("Final");
                 }
             }
         });
@@ -197,36 +217,38 @@ public class ShopScreen implements Screen {
         Label cureLabel = new Label("Cure", skin);
         Label cureDescription = new Label("Cure description", skin);
         cureDescription.setAlignment(Align.topLeft);
-        TextButton cureButtonBuy = new TextButton("Buy (" + actionManager.getCureCount() + ")\n$" + ActionManager.CURE_ITEM_COST, skin);
+        TextButton cureButtonBuyPrice = new TextButton(Integer.toString(ActionManager.CURE_ITEM_COST), skin, "shop-button-price");
+        TextButton cureButtonBuy = new TextButton("Buy", skin, "shop-button");
         cureButtonBuy.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 actionManager.setCureCount(actionManager.getCureCount() + 1);
-                ((TextButton) actor).setText("Buy (" + actionManager.getCureCount() + ")\n$" + ActionManager.CURE_ITEM_COST);
+                //((TextButton) actor).setText(ActionManager.CURE_ITEM_COST);
                 
                 if (actionManager.getCureCount() == ActionManager.MAX_CURE_COUNT) {
                     ((TextButton) actor).setDisabled(true);
                 }
             }
         });
-        TextButton cureButtonUpgrade = new TextButton("Upgrade\n$" + ActionManager.CURE_UPGRADE_1_COST, skin);
+        TextButton cureButtonUpgradePrice = new TextButton(Integer.toString(ActionManager.CURE_UPGRADE_1_COST), skin, "shop-button-price");
+        TextButton cureButtonUpgrade = new TextButton("Upgrade", skin, "shop-button");
         if (actionManager.getCureLevel() == ActionManager.MID_CURE_LEVEL) {
-            cureButtonUpgrade.setText("Upgrade\n$" + ActionManager.CURE_UPGRADE_2_COST);
+            //cureButtonUpgrade.setText("Upgrade\n$" + ActionManager.CURE_UPGRADE_2_COST);
         } else if (actionManager.getCureLevel() == ActionManager.MAX_CURE_LEVEL) {
             cureButtonUpgrade.setDisabled(true);
-            cureButtonUpgrade.setText("Final\n$-");
+            cureButtonUpgrade.setText("Final");
         }
         cureButtonUpgrade.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 actionManager.incrementCureLevel();
-                cureButton.setDrawable(AssetsManager.getAssetsManager().getDrawable("cure-" + actionManager.getCureLevel()));
+                cureImage.setDrawable(AssetsManager.getAssetsManager().getDrawable("cure-" + actionManager.getCureLevel()));
 
                 if (actionManager.getCureLevel() == ActionManager.MID_CURE_LEVEL) {
-                    ((TextButton) actor).setText("Upgrade\n$" + ActionManager.CURE_UPGRADE_2_COST);
+                    //((TextButton) actor).setText("Upgrade" + ActionManager.CURE_UPGRADE_2_COST);
                 } else if (actionManager.getCureLevel() == ActionManager.MAX_CURE_LEVEL) {
                     ((TextButton) actor).setDisabled(true);
-                    ((TextButton) actor).setText("Final\n$-");
+                    ((TextButton) actor).setText("Final");
                 }
             }
         });
@@ -236,17 +258,48 @@ public class ShopScreen implements Screen {
         tableButtons.add(buttonIAP).center().expand();
         tableButtons.add(buttonSettings).right();
 
-        tableTapAction.add(tapButton).size(80);
-        tableTapAction.add(tapLabel).expandX().fillX();
+        tableTapText.add(tapLabel).expandX().fillX();
+        tableTapText.row();
+        tableTapText.add(tapDescription).left();
 
-        tableScatterAction.add(scatterButton).size(80).left();
-        tableScatterAction.add(scatterLabel).expandX().fillX();
+        tableScatterText.add(scatterLabel).expandX().fillX();
+        tableScatterText.row();
+        tableScatterText.add(scatterDescription).left();
 
-        tableBombAction.add(bombButton).size(80).left();
-        tableBombAction.add(bombLabel).expandX().fillX();
+        tableBombText.add(bombLabel).expandX().fillX();
+        tableBombText.row();
+        tableBombText.add(bombDescription).left();
 
-        tableCureAction.add(cureButton).size(80).left();
-        tableCureAction.add(cureLabel).expandX().fillX();
+        tableCureText.add(cureLabel).expandX().fillX();
+        tableCureText.row();
+        tableCureText.add(cureDescription).left();
+
+
+        tableTapAction.add(tapImage).size(80).pad(AssetsManager.getAssetsManager().getPadding());
+        tableTapAction.add(tableTapText).expandX().fillX();
+        tableTapAction.add(tapButtonUpgradePrice);
+        tableTapAction.add(tapButtonUpgrade).padRight(AssetsManager.getAssetsManager().getPadding());
+
+        tableScatterAction.add(scatterImage).size(80).pad(AssetsManager.getAssetsManager().getPadding());
+        tableScatterAction.add(tableScatterText).expandX().fillX();
+        tableScatterAction.add(scatterButtonBuyPrice);
+        tableScatterAction.add(scatterButtonBuy).padRight(AssetsManager.getAssetsManager().getPadding());
+        tableScatterAction.add(scatterButtonUpgradePrice);
+        tableScatterAction.add(scatterButtonUpgrade).padRight(AssetsManager.getAssetsManager().getPadding());
+
+        tableBombAction.add(bombImage).size(80).pad(AssetsManager.getAssetsManager().getPadding());
+        tableBombAction.add(tableBombText).expandX().fillX();
+        tableBombAction.add(bombButtonBuyPrice);
+        tableBombAction.add(bombButtonBuy).padRight(AssetsManager.getAssetsManager().getPadding());
+        tableBombAction.add(bombButtonUpgradePrice);
+        tableBombAction.add(bombButtonUpgrade).padRight(AssetsManager.getAssetsManager().getPadding());
+
+        tableCureAction.add(cureImage).size(80).pad(AssetsManager.getAssetsManager().getPadding());
+        tableCureAction.add(tableCureText).expandX().fillX();
+        tableCureAction.add(cureButtonBuyPrice);
+        tableCureAction.add(cureButtonBuy).padRight(AssetsManager.getAssetsManager().getPadding());
+        tableCureAction.add(cureButtonUpgradePrice);
+        tableCureAction.add(cureButtonUpgrade).padRight(AssetsManager.getAssetsManager().getPadding());
 
         tableActions.add(tableTapAction).expandX().fillX()
                 .padBottom(AssetsManager.getAssetsManager().getPadding() * 2)
