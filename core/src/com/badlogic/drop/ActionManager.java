@@ -115,7 +115,9 @@ public class ActionManager {
     }
 
     public void incrementTapLevel() {
-        this.tapLevel++;
+        if (tapLevel < MAX_TAP_LEVEL) {
+            this.tapLevel++;
+        }
     }
 
     public int getTapLevel() { return this.tapLevel; }
@@ -129,7 +131,9 @@ public class ActionManager {
     }
 
     public void incrementScatterLevel() {
-        this.scatterLevel++;
+        if (scatterLevel < MAX_SCATTER_LEVEL) {
+            this.scatterLevel++;
+        }
     }
 
     public int getScatterLevel() { return this.scatterLevel; }
@@ -143,7 +147,9 @@ public class ActionManager {
     }
 
     public void incrementBombLevel() {
-        this.bombLevel++;
+        if (bombLevel < MAX_BOMB_LEVEL) {
+            this.bombLevel++;
+        }
     }
 
     public int getBombLevel() { return this.bombLevel; }
@@ -157,7 +163,9 @@ public class ActionManager {
     }
 
     public void incrementCureLevel() {
-        this.cureLevel++;
+        if (cureLevel < MAX_CURE_LEVEL) {
+            this.cureLevel++;
+        }
     }
 
     public int getCureLevel() { return this.cureLevel; }

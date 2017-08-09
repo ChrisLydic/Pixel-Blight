@@ -11,6 +11,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: { down: default-round-down, up: default-round },
+	empty: {},
 	world-1-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
 	world-2-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
 	world-3-style: { down: world-1-down, up: world-1, disabled: world-1-disabled },
@@ -68,7 +69,13 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default-vertical: { background: default-slider, knob: default-round-large }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	default: { font: default-font, fontColor: white }
+	default: { font: default-font, fontColor: white },
+	shop-button-price: { font: default-font, fontColor: white, background: shop-button-price },
+	shop-button-price-down: { font: default-font, fontColor: white, background: shop-button-price-down },
+	shop-button-price-disabled: { font: default-font, fontColor: white, background: shop-button-price-disabled },
+	shop-button: { font: default-font, fontColor: white, background: shop-button },
+	shop-button-down: { font: default-font, fontColor: white, background: shop-button-down },
+	shop-button-disabled: { font: default-font, fontColor: white, background: shop-button-disabled },
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, font: default-font, fontColor: white, cursor: cursor }

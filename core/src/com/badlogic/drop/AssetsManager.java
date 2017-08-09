@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -238,6 +239,10 @@ public class AssetsManager {
             default:
                 throw new IllegalArgumentException(effectName);
         }
+    }
+
+    public Label.LabelStyle getLabelStyle(String styleName) {
+        return assetManager.get(UI_SKIN, Skin.class).get(styleName, Label.LabelStyle.class);
     }
 
     public int getPadding() {
