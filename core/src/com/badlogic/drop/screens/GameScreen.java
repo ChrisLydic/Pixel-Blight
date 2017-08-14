@@ -47,6 +47,7 @@ public class GameScreen implements Screen {
     private float y = 0;
     private boolean isPressed;
     private ProgressBar progressBar;
+    private Label labelPoints;
 
     private Image touchAction;
     private Image scatterAction;
@@ -106,15 +107,18 @@ public class GameScreen implements Screen {
         buttonStore.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance(game).push(new ShopScreen(game));
+                ScreenManager.getInstance(game).push(new ShopScreen(game, level));
             }
         });
+
+        labelPoints = new Label(Integer.toString(squareGroup.getPoints()), skin);
 
         progressBar = new ProgressBar(0, 1, 0.01f, false, skin);
         progressBar.setValue(1);
 
         tableButtons.add(buttonPause).padRight(AssetsManager.getAssetsManager().getPadding()).left();
         tableButtons.add(buttonStore).padRight(AssetsManager.getAssetsManager().getPadding()).left().expand();
+        tableButtons.add(labelPoints).padRight(AssetsManager.getAssetsManager().getPadding() * 2).right();
         tableButtons.add(progressBar).right();
 
         Table tableTouchAction = new Table();
@@ -342,6 +346,10 @@ public class GameScreen implements Screen {
             cureAction.setTouchable(Touchable.disabled);
         } else {
             cureAction.setTouchable(Touchable.enabled);
+        }
+
+        if (!labelPoints.getText().toString().equals(Integer.toString(squareGroup.getPoints()))) {
+            labelPoints.setText(Integer.toString(squareGroup.getPoints()));
         }
     }
 }

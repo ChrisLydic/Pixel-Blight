@@ -20,6 +20,7 @@ public class SquareGroup {
     private int totalSquares;
     private int infectedSquares;
     private int curedSquares;
+    private int points;
     //number of times user uses tap action successfully
     private int taps;
     //number of cells user uncorrupts
@@ -39,6 +40,7 @@ public class SquareGroup {
     }
 
     private void setup() {
+        points = ActionManager.getActionManager().getPointModifier(); // initial money starts at 0, but can be increased with IAPs
         count = 0;
         taps = 0;
         uncorruptCount = 0;
@@ -256,14 +258,27 @@ public class SquareGroup {
                     }
 
                     if (action == ActionManager.ActionType.TAP) {
-                        if (squares[r][c].isInfected()) {
-                            ParticleEffectPool.PooledEffect pooledEffect = AssetsManager.getAssetsManager().getEffectPool(AssetsManager.TAP_EFFECT).obtain();
-                            pooledEffect.setPosition(x, y);
-                            pooledTapEffects.add(pooledEffect);
+                        affectedSquares.clear();
 
-                            squares[r][c].unCorrupt(1);
-                            uncorruptCount++;
-                            taps++;
+                        if (ActionManager.getActionManager().getCurrentLevel() == 1) {
+                            buildNeighbors(squares[r][c], affectedSquares, 0);
+                        } else if (ActionManager.getActionManager().getCurrentLevel() == 2) {
+                            buildNeighbors(squares[r][c], affectedSquares, 1);
+                        } else if (ActionManager.getActionManager().getCurrentLevel() == 3) {
+                            buildNeighbors(squares[r][c], affectedSquares, 2);
+                        }
+
+                        for (Square square : affectedSquares) {
+                            if (square.isInfected()) {
+                                ParticleEffectPool.PooledEffect pooledEffect = AssetsManager.getAssetsManager().getEffectPool(AssetsManager.TAP_EFFECT).obtain();
+                                pooledEffect.setPosition(x, y); // Change this to be better for large hits TODO
+                                pooledTapEffects.add(pooledEffect);
+
+                                square.unCorrupt(1);
+                                uncorruptCount++;
+                                taps++;
+                                updatePoints(10);
+                            }
                         }
 
                     } else if (action == ActionManager.ActionType.SCATTER) {
@@ -287,6 +302,7 @@ public class SquareGroup {
 
                                         affected.unCorrupt(1);
                                         uncorruptCount++;
+                                        updatePoints(1);
 
                                         animations.add(AssetsManager.getAssetsManager().getAnimation("_", affected.getX() - AssetsManager.SIZE / 2, affected.getY() - AssetsManager.SIZE / 2, AssetsManager.SIZE * 2, AssetsManager.SIZE * 2, 0.07f, false));
                                     } else {
@@ -301,6 +317,7 @@ public class SquareGroup {
 
                                     affected.unCorrupt(1);
                                     uncorruptCount++;
+                                    updatePoints(1);
 
                                     animations.add(AssetsManager.getAssetsManager().getAnimation("_", affected.getX() - AssetsManager.SIZE / 2, affected.getY() - AssetsManager.SIZE / 2, AssetsManager.SIZE * 2, AssetsManager.SIZE * 2, 0.07f, false));
                                 } else {
@@ -399,6 +416,7 @@ public class SquareGroup {
                         for (Square square : affectedSquares) {
                             square.unCorrupt(1);
                             uncorruptCount++;
+                            updatePoints(1);
                         }
 
                     } else if (action == ActionManager.ActionType.CURE) {
@@ -410,6 +428,7 @@ public class SquareGroup {
 
                         squares[r][c].cure();
                         uncorruptCount++;
+                        updatePoints(1);
                     }
                     break;
                 }
@@ -515,5 +534,22 @@ public class SquareGroup {
         }
 
         return stars;//TODO: real calculation
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void updatePoints(int points) {
+        if (points > 0 && Integer.MAX_VALUE - this.points < points) {
+            return; //avoid overflow
+        }
+
+        this.points += points;
+        if (this.points < 0) {
+            this.points = 0;
+            Gdx.app.error("SquareGroup", "Incorrect adjustment of points: adjustment value " + points);
+            throw new IllegalStateException();
+        }
     }
 }

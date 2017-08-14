@@ -58,6 +58,7 @@ public class ActionManager {
     private int cureCount;
     private int cureCountModifier;
 
+    private int pointModifier;
 
     public enum ActionType {
         TAP,
@@ -82,6 +83,8 @@ public class ActionManager {
         scatterCountModifier = 0;
         bombCountModifier = 0;
         cureCountModifier = 0;
+
+        pointModifier = 0;
 
         reset();
     }
@@ -240,6 +243,14 @@ public class ActionManager {
 
     public void setCureCountModifier(int cureCountModifier) {
         this.cureCountModifier = cureCountModifier;
+    }
+
+    public int getPointModifier() {
+        return pointModifier;
+    }
+
+    public void setPointModifier(int pointModifier) {
+        this.pointModifier = pointModifier;
     }
 
     public void reset() {

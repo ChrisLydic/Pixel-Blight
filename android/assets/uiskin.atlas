@@ -607,8 +607,8 @@ shop-button-price-down
   rotate: false
   xy: 136, 224
   size: 36, 36
-  split: 9, 9, 6, 18
-  pad: 16, 18, 6, 18
+  split: 9, 9, 9, 12
+  pad: 16, 18, 10, 14
   orig: 36, 36
   offset: 0, 0
   index: -1
@@ -634,8 +634,8 @@ shop-button-down
   rotate: false
   xy: 173, 224
   size: 36, 36
-  split: 9, 9, 6, 18
-  pad: 16, 18, 6, 18
+  split: 9, 9, 9, 12
+  pad: 16, 18, 10, 14
   orig: 36, 36
   offset: 0, 0
   index: -1
